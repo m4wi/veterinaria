@@ -1,5 +1,5 @@
 import express from 'express'
-import controllers from './controllers/auth.controller.js'
+import controllers from './src/controllers/auth.controller.js'
 // import controllers2 from './controllers/sabana.controller.js'
 
 const app = express()
