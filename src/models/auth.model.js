@@ -3,7 +3,7 @@ import sequelize from '../config/db.js'
 const model = {}
 
 model.isValidArete = async (arete) => {
-  return sequelize.query(`SELECT COUNT(*) AS state FROM Tbl_animal WHERE ID_arete = "${arete}";`, { raw: true})
+  return sequelize.query(`SELECT COUNT(*) AS state FROM Tbl_animal WHERE id_arete = '${arete}';`, { raw: true})
   .then(([result, metadata]) => {
     return result[0].state
   })
@@ -11,6 +11,11 @@ model.isValidArete = async (arete) => {
     throw error
   })
 }
+
+
+
+
+
 model.saveAnimal = async (data) => {
   // CALL saveAnimal(${arete}, ${sexo},${especie},${raza},${padre},${madre},${t_ingreso},${t_fecha})
   const { arete, sexo, especie, raza, padre, madre, t_ingreso, t_fecha } = data
