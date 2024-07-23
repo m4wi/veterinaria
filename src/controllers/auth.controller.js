@@ -13,8 +13,14 @@ controller.validAnimal = async (req, res) => {
   }
 }
 
-controller.getAnimal = async (req, res) => {
-
+controller.authUser = async (req, res) => {
+  try {
+    const result = await model.authUser(req.body)
+    res.send(result[0])
+  } catch (error) {
+    res.status(500).send({ error: error.message })
+  }
 }
+
 
 export default controller

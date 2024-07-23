@@ -7,9 +7,29 @@ model.isValidArete = async (arete) => {
   .then(([result, metadata]) => {
     return result
   })
-  .catch((error) => {
+  .catch((error) => { 
     throw error
   })
+}
+
+model.authUser = async (data) => {
+  try {
+    const { username, password } = data;
+    const result = await sequelize.query(
+      `SELECT count(*) as state FROM Tbl_usuario WHERE username = :user AND password = :pass;`,
+      {
+        replacements: {
+          user: username,
+          pass: password
+        },
+        raw: true
+      }
+    )
+    return result[0]
+  } catch (error) {
+    console.error('Error executing authUser query:', error);
+    throw error
+  }
 }
 
 export default model;

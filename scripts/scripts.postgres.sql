@@ -141,7 +141,7 @@ SELECT insertBiometria(
 );
 
 /* Reproduccion */
-CREATE OR REPLACE FUNCTION insertReproduccion(
+CREATE OR REPLACE FUNCTION saveReproduccion(
     p_rep_snd_gurural VARCHAR(10),
     p_rep_impetu NUMERIC,
     p_rep_derribo NUMERIC,
@@ -308,6 +308,16 @@ SELECT saveVellon(
 
 INSERT INTO Tbl_usuario(username, password)
 VALUES('Jimmy', '123456789');
+
+SELECT
+  count(*) as state
+FROM
+  Tbl_usuario
+WHERE
+  username = 'Jimmy'
+  AND
+  password = '123456789';
+
 
 INSERT INTO Tbl_dosificacion(dsf_fecha, FK_producto, FK_animal)
 VALUES

@@ -102,10 +102,10 @@ model.formBiometria = async (data) => {
 
 */
 model.formVellon = async (data) => {
-  const { densidad, definicion, LONmecha, calce, uniformidad,tuco,color,clase,observacion, arete} = data
+  const { densidad, definicion, LONmecha, calce, uniformidad,tuco,color,clase,observacion, arete } = data
   try {
     const metadata = await sequelize.query(
-      `SELECT saveVellon( :densidad, :definicion, :LONmecha, :calce, :uniformidad, :tuco, :color, :clase, :observacion, :arete)`,
+      `SELECT saveVellon( :densidad, :definicion, :LONmecha, :calce, :uniformidad, :tuco, :color, :clase, :observacion, :arete, CURRENT_DATE)`,
       {
         replacements: {
           densidad : densidad,
@@ -132,15 +132,34 @@ model.formVellon = async (data) => {
   }
 }
 
+/*
 
+    p_rep_snd_gurural VARCHAR(10),
+    p_rep_impetu NUMERIC,
+    p_rep_derribo NUMERIC,
+    p_rep_tiempo_copula NUMERIC,
+    p_rep_observacion VARCHAR(400),
+    p_rep_fecha DATE,
+    p_FK_macho VARCHAR(20),
+    p_rep_nderribo INT,
+    p_FK_hembra VARCHAR(20)
+*/
 
 model.formReproduccion = async (data) => {
   try {
+    const { snd_gutural, impetu, derribo, t_copula, obs, macho, hembra, n_derribo} = data
     const metadata = await sequelize.query(
-      ``,
+      `SELECT saveReproduccion(:sndg, :im, :derr , :tcop, :obs,CURRENT_DATE, :macho, :nderr,:hembra)`,
       {
         replacements: {
-
+          sndg: snd_gutural,
+          im: impetu,
+          derr: derribo,
+          tcop: t_copula,
+          obs: obs,
+          macho: macho,
+          nderr: n_derribo,
+          hembra: hembra
         },
         type: sequelize.QueryTypes.INSERT,
         raw: true
@@ -150,23 +169,45 @@ model.formReproduccion = async (data) => {
     return !(metadata)
 
   } catch (error) {
-    console.error('Error executing saveVellon query:', error);
+    console.error('Error executing saveReproduccion query:', error);
     throw error
   }
 }
 
+/*
+    p_rep_fecha DATE,
+    p_rep_hora_inicio VARCHAR(8),
+    p_rep_hora_fin VARCHAR(8),
+    p_tem_inicio NUMERIC(5,2),
+    p_temp_final NUMERIC(5,2),
+    p_muestra_volumen NUMERIC(5,2),
+    p_muestra_color VARCHAR(60),
+    p_observacion VARCHAR(400),
+    p_FK_animal VARCHAR(20),
+    p_num_maniqui INT
+
+*/
 model.formMuestra = async (data) => {
   try {
+    const { h_inicio, h_fin, t_inicio, t_fin, volumen, color, obs, arete, maniqui} = data
     const metadata = await sequelize.query(
-      ``,
+      `SELECT saveMuestra(CURRENT_DATE, :Hinicio, :Hfin, :Tinicio, :Tfin, :volumen, :color, :obs, :arete, :maniqui)`,
       {
         replacements: {
+          Hinicio: h_inicio,
+          Hfin: h_fin,
+          Tinicio: t_inicio,
+          Tfin: t_fin,
+          volumen: volumen,
+          color: color,
+          obs: obs,
+          arete: arete,
+          maniqui: maniqui
         },
         type: sequelize.QueryTypes.INSERT,
         raw: true
       }
     )
-
     return !(metadata)
 
   } catch (error) {
@@ -177,16 +218,18 @@ model.formMuestra = async (data) => {
 
 model.formDosificacion = async (data) => {
   try {
+    const { arete, producto} = data
     const metadata = await sequelize.query(
-      ``,
+      `INSERT INTO Tbl_dosificacion(dsf_fecha, FK_producto, FK_animal) VALUES(CURRENT_DATE, :numprod , :arete);`,
       {
         replacements: {
+          numprod: producto,
+          arete: arete
         },
         type: sequelize.QueryTypes.INSERT,
         raw: true
       }
     )
-
     return !(metadata)
 
   } catch (error) {

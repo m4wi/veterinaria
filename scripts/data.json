@@ -34,5 +34,42 @@
     "CNdiente": "1 diente",
     "canino": "1 y 1 caninos",
     "isquiones": 12.5
+  },
+  {
+    "densidad": "Bueno",
+    "definicion": "Alto",
+    "LONmecha": 3.5,
+    "calce": "Alto",
+    "uniformidad": "Alto",
+    "tuco": "Alto",
+    "color": "Marron Claro",
+    "clase": "A",
+    "observacion": "ninguna",
+    "arete": "HS-1"
+  },
+  {
+    "arete": "HS-1",
+    "producto": 1
+  },
+  {
+    "snd_gutural": "No",
+    "impetu": 4.5,
+    "derribo": 3.5,
+    "t_copula": 4.8,
+    "obs": "ninguna",
+    "macho": "HS-1",
+    "n_derribo": 2,
+    "hembra": "HS-3"
+  },
+  {
+    "h_inicio": "10:41",
+    "h_fin": "10:42",
+    "t_inicio": 78.5,
+    "t_fin": 77.5,
+    "volumen": 3.4,
+    "color": "Blanco",
+    "obs": "Ninguna",
+    "arete": "HS-1",
+    "maniqui": 1
   }
 ]
