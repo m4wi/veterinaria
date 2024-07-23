@@ -9,7 +9,7 @@ import formRoutes from '../routes/forms.routes.js'
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:3000/',
+  origin: 'https://veterinaria-production-b14c.up.railway.app/',
   credentials: true
 }))
 
