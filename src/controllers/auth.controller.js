@@ -16,7 +16,7 @@ controller.validAnimal = async (req, res) => {
 controller.authUser = async (req, res) => {
   try {
     const result = await model.authUser(req.body)
-    res.send(result[0])
+    res.status(200).json(result)
   } catch (error) {
     res.status(500).send({ error: error.message })
   }
