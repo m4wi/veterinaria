@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 
 // import other routes
 import authRoutes from '../routes/auth.routes.js'
@@ -6,6 +7,11 @@ import reportRoutes from '../routes/report.routes.js'
 import formRoutes from '../routes/forms.routes.js'
 
 const app = express()
+
+app.use(cors({
+  origin: 'http://localhost:3000/',
+  credentials: true
+}))
 
 app.get('/', (req, res) => {
   res.status(200).send("veterinaria API");
