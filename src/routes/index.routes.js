@@ -8,10 +8,7 @@ import formRoutes from '../routes/forms.routes.js'
 
 const app = express()
 
-app.use(cors({
-  origin: 'https://veterinaria-production-b14c.up.railway.app/',
-  credentials: true
-}))
+app.use(cors())
 
 app.get('/', (req, res) => {
   res.status(200).send("veterinaria API");
