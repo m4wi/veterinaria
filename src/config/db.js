@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize'
-import { POST_URL } from 'config.js'
+import { POST_URL } from './config.js'
 
 const sequelize = new Sequelize(`${POST_URL}`)
 
