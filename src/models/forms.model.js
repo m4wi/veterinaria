@@ -132,8 +132,66 @@ model.formVellon = async (data) => {
   }
 }
 
-model.formReproduccion = async (data) => {
 
+
+model.formReproduccion = async (data) => {
+  try {
+    const metadata = await sequelize.query(
+      ``,
+      {
+        replacements: {
+
+        },
+        type: sequelize.QueryTypes.INSERT,
+        raw: true
+      }
+    )
+
+    return !(metadata)
+
+  } catch (error) {
+    console.error('Error executing saveVellon query:', error);
+    throw error
+  }
 }
 
+model.formMuestra = async (data) => {
+  try {
+    const metadata = await sequelize.query(
+      ``,
+      {
+        replacements: {
+        },
+        type: sequelize.QueryTypes.INSERT,
+        raw: true
+      }
+    )
+
+    return !(metadata)
+
+  } catch (error) {
+    console.error('Error executing saveMuestra query:', error);
+    throw error
+  }
+}
+
+model.formDosificacion = async (data) => {
+  try {
+    const metadata = await sequelize.query(
+      ``,
+      {
+        replacements: {
+        },
+        type: sequelize.QueryTypes.INSERT,
+        raw: true
+      }
+    )
+
+    return !(metadata)
+
+  } catch (error) {
+    console.error('Error executing saveDosificacion query:', error);
+    throw error
+  }
+}
 export default model

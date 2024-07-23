@@ -961,3 +961,63 @@ END;
 $$ LANGUAGE plpgsql;
 
 SELECT * FROM getAnimalBiometria(NULL, NULL, NULL);
+
+
+
+SELECT
+  sexo,
+  COUNT(*) AS state
+FROM Tbl_animal
+WHERE
+  id_arete = 'HS-0'
+GROUP BY
+  sexo;
+
+
+CREATE OR REPLACE FUNCTION checkAnimal(id_arete_param VARCHAR)
+RETURNS TABLE (
+  animal_exists INTEGER,
+  sexo VARCHAR
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    CASE
+      WHEN COUNT(*) > 0 THEN 1
+      ELSE 0
+    END AS animal_exists,
+    MAX(sexo) AS sexo
+  FROM (
+    SELECT
+      sexo
+    FROM Tbl_animal
+    WHERE id_arete = id_arete_param
+    GROUP BY sexo
+  ) AS subquery;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT checkanimal('HS-1');
+
+CREATE OR REPLACE FUNCTION checkAnimal(id_arete_param VARCHAR)
+RETURNS TABLE (
+  animal_exists INTEGER,
+  animal_sexo VARCHAR
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    CASE
+      WHEN COUNT(subquery.sexo) > 0 THEN 1
+      ELSE 0
+    END AS animal_exists,
+    subquery.sexo as animal_sexo
+  FROM (
+    SELECT
+      sexo
+    FROM Tbl_animal
+    WHERE id_arete = id_arete_param
+    GROUP BY sexo
+  ) AS subquery;
+END;
+$$ LANGUAGE plpgsql;

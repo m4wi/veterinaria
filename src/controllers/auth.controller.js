@@ -7,7 +7,7 @@ controller.validAnimal = async (req, res) => {
   try {
     const { arete } = req.body
     const animalState = await model.isValidArete(arete);
-    res.status(200).send({ isValid: animalState}) 
+    res.status(200).json(animalState)
   } catch {
     res.status(500).send({ error: error.message })
   }
