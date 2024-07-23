@@ -1,0 +1,38 @@
+[
+  {
+    "arete": "HS-21",
+    "sexo": "Macho",
+    "especie": 1,
+    "raza": 1,
+    "padre": "",
+    "madre": "",
+    "tipo_ingreso": "Trazlado",
+    "fecha_ingreso": "01-01-24",
+    "edad": 2.3
+  },
+  {
+    "peso": 41.5,
+    "Ccorporal": 12.5,
+    "Lcabeza": 12.5,
+    "Acabeza": 12.5,
+    "Loreja": 12.5,
+    "Lcuello": 12.5,
+    "Lcuerpo": 12.5,
+    "ALcruz": 12.5,
+    "ANgrupa": 12.5,
+    "ALgrupa": 12.5,
+    "AMpecho": 12.5,
+    "CIcuerpo": 12.5,
+    "APanterior": "Normal",
+    "APposterior": "Normal",
+    "TDEancho": 12.5,
+    "TDElargo": 12.5,
+    "TIZancho": 12.5,
+    "TIZlargo": 12.5,
+    "COvulvar": 12.5,
+    "arete": "HS-1",
+    "CNdiente": "1 diente",
+    "canino": "1 y 1 caninos",
+    "isquiones": 12.5
+  }
+]

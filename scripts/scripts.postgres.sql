@@ -9,7 +9,8 @@ CREATE OR REPLACE FUNCTION saveAnimal(
     p_padre VARCHAR(20),
     p_madre VARCHAR(20),
     p_tipo_ingreso VARCHAR(50),
-    p_fecha_ingreso DATE
+    p_fecha_ingreso DATE,
+    p_edad_aproximada NUMERIC DEFAULT 0
 )
 RETURNS VOID AS $$
 BEGIN
@@ -19,13 +20,13 @@ BEGIN
 
     -- Insertar en Tbl_animal_fecha
     INSERT INTO Tbl_animal_fecha (ingreso_tipo, fecha_ingreso, ingreso_edad, fk_arete)
-    VALUES (p_tipo_ingreso, p_fecha_ingreso, 0.0, p_arete);
+    VALUES (p_tipo_ingreso, p_fecha_ingreso, p_edad_aproximada , p_arete);
 
     -- No es necesario usar COMMIT; PostgreSQL maneja la transacción automáticamente en funciones
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT saveAnimal('HS-6', 'Hembra', 1, 1, 'HS-2', 'HS-4', 'Nacimiento', '2020-12-04');
+SELECT saveAnimal('HS-15', 'Hembra', 1, 1, 'HS-2', 'HS-4', 'Nacimiento', '2021-12-04', 2.5);
 
 
 /* DATOS BIOMETRICOS */
@@ -743,7 +744,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT * FROM getMuestraTable('HS-1', '2024-07-21', '2024-07-22');
+SELECT * FROM getMuestraTable(NULL , '2024-07-21', '2024-07-22');
 
 
 
@@ -959,4 +960,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT * FROM getAnimalBiometria('HS-3', '2020-07-21', '2024-07-23');
+SELECT * FROM getAnimalBiometria(NULL, NULL, NULL);
