@@ -1,7 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
-import routes from './routes/index.routes.js'
+import routes from 'routes/index.routes.js'
 
 dotenv.config()
 
