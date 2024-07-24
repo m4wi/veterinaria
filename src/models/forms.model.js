@@ -87,20 +87,8 @@ model.formBiometria = async (data) => {
 
 
 }
-/*
-    p_vellon_densidad VARCHAR(10),
-    p_vellon_definicion VARCHAR(10),
-    p_vellon_longitudMecha NUMERIC(5,2),
-    p_vellon_calce VARCHAR(10),
-    p_vellon_uniformidad VARCHAR(10),
-    p_vellon_tuco VARCHAR(10),
-    p_vellon_color VARCHAR(45),
-    p_vellon_clase VARCHAR(1),
-    p_vellon_observacion VARCHAR(400),
-    p_FK_animal VARCHAR(20),
-    p_vellon_fecha DATE
 
-*/
+
 model.formVellon = async (data) => {
   const { densidad, definicion, LONmecha, calce, uniformidad,tuco,color,clase,observacion, arete } = data
   try {
@@ -132,19 +120,6 @@ model.formVellon = async (data) => {
   }
 }
 
-/*
-
-    p_rep_snd_gurural VARCHAR(10),
-    p_rep_impetu NUMERIC,
-    p_rep_derribo NUMERIC,
-    p_rep_tiempo_copula NUMERIC,
-    p_rep_observacion VARCHAR(400),
-    p_rep_fecha DATE,
-    p_FK_macho VARCHAR(20),
-    p_rep_nderribo INT,
-    p_FK_hembra VARCHAR(20)
-*/
-
 model.formReproduccion = async (data) => {
   try {
     const { snd_gutural, impetu, derribo, t_copula, obs, macho, hembra, n_derribo} = data
@@ -174,19 +149,6 @@ model.formReproduccion = async (data) => {
   }
 }
 
-/*
-    p_rep_fecha DATE,
-    p_rep_hora_inicio VARCHAR(8),
-    p_rep_hora_fin VARCHAR(8),
-    p_tem_inicio NUMERIC(5,2),
-    p_temp_final NUMERIC(5,2),
-    p_muestra_volumen NUMERIC(5,2),
-    p_muestra_color VARCHAR(60),
-    p_observacion VARCHAR(400),
-    p_FK_animal VARCHAR(20),
-    p_num_maniqui INT
-
-*/
 model.formMuestra = async (data) => {
   try {
     const { h_inicio, h_fin, t_inicio, t_fin, volumen, color, obs, arete, maniqui} = data

@@ -301,7 +301,7 @@ SELECT saveVellon(
     'Color',            -- vellon_color
     'A',                -- vellon_clase
     'ninguna',          -- vellon_observacion
-    'HS-1',             -- FK_animal
+    'HS-3',             -- FK_animal
     CURRENT_DATE        -- vellon_fecha
 );
 
@@ -492,6 +492,9 @@ SELECT * FROM vw_sabana_general2;
 
 DROP VIEW IF EXISTS vw_sabana_hembra;
 
+SELECT * FROM vw_sabana_hembra;
+
+
 CREATE VIEW vw_sabana_hembra AS
 SELECT
   *
@@ -548,7 +551,34 @@ LEFT JOIN (
     ON rx.FK_animal = tb.FK_animal
     AND rx.mxfecha = tb.bio_fecha
 ) AS sb_1
-ON sb_0.id_arete = sb_1.FK_animal;
+ON sb_0.id_arete = sb_1.FK_animal
+LEFT JOIN(
+  SELECT
+    tv.vellon_calce,
+    tv.vellon_clase,
+    tv.vellon_color,
+    tv.vellon_definicion,
+    tv.vellon_densidad,
+    tv.vellon_longitudmecha,
+    tv.vellon_observacion,
+    tv.vellon_tuco,
+    tv.vellon_uniformidad,
+    tv.fk_animal AS v_animal
+  FROM
+    tbl_vellon tv
+  INNER JOIN (
+    SELECT
+      fk_animal AS v_fk_animal,
+      MAX(vellon_fecha) AS vellon_fecha
+    FROM
+      tbl_vellon
+    GROUP BY
+      fk_animal
+  ) AS rv
+  ON rv.v_fk_animal = tv.fk_animal
+  AND rv.vellon_fecha = tv.vellon_fecha
+) AS sb_2
+ON sb_1.FK_animal = sb_2.v_animal;
 
 -- Consultar la vista
 SELECT * FROM vw_sabana_hembra;

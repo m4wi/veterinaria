@@ -1,4 +1,5 @@
 import model from '../models/report.model.js'
+import downloader from '../lib/excel.js'
 
 const controller = {}
 
@@ -47,6 +48,23 @@ controller.report = async (req, res) => {
     } else {
       res.status(400).send({ error: 'Invalid type parameter' });
     }
+  } catch (error) {
+    res.status(500).send({ error: error.message })
+  }
+}
+
+controller.download = async (req, res) => {
+  try {
+    const data = await model.sabanaHembra()
+    const file = await downloader(data)
+
+    res.writeHead(200, {
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Disposition": "attachment; filename=hembra.xlsx"
+    })
+
+    res.end(file)
+
   } catch (error) {
     res.status(500).send({ error: error.message })
   }
