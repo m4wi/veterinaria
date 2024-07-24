@@ -35,7 +35,7 @@ model.formAnimal = async (data) => {
         raw: true
       }
     )
-    return !(metadata >= 1)
+    return metadata
 
   } catch ( error ) {
     console.error('Error executing saveAnimal query:', error);
@@ -78,7 +78,7 @@ model.formBiometria = async (data) => {
         raw: true
       }
     )
-    return !(metadata)
+    return metadata
 
   } catch ( error ) {
     console.error('Error executing saveBiometria query:', error);
@@ -112,7 +112,7 @@ model.formVellon = async (data) => {
       }
     )
 
-    return !(metadata)
+    return metadata
 
   } catch (error) {
     console.error('Error executing saveVellon query:', error);
@@ -141,7 +141,7 @@ model.formReproduccion = async (data) => {
       }
     )
 
-    return !(metadata)
+    return metadata
 
   } catch (error) {
     console.error('Error executing saveReproduccion query:', error);
@@ -170,7 +170,7 @@ model.formMuestra = async (data) => {
         raw: true
       }
     )
-    return !(metadata)
+    return metadata
 
   } catch (error) {
     console.error('Error executing saveMuestra query:', error);
@@ -192,7 +192,7 @@ model.formDosificacion = async (data) => {
         raw: true
       }
     )
-    return !(metadata)
+    return metadata
 
   } catch (error) {
     console.error('Error executing saveDosificacion query:', error);
