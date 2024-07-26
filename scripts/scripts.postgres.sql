@@ -203,7 +203,9 @@ CREATE OR REPLACE FUNCTION saveMuestra(
     p_muestra_color VARCHAR(60),
     p_observacion VARCHAR(400),
     p_FK_animal VARCHAR(20),
-    p_num_maniqui INT
+    p_num_maniqui INT,
+    p_filancia NUMERIC,
+    p_ph NUMERIC
 )
 RETURNS VOID AS $$
 BEGIN
@@ -217,7 +219,9 @@ BEGIN
         muestra_color,
         observacion,
         FK_animal,
-        num_maniqui
+        num_maniqui,
+        muestra_filancia,
+        muestra_ph
     ) VALUES (
         p_rep_fecha,
         p_rep_hora_inicio,
@@ -228,10 +232,15 @@ BEGIN
         p_muestra_color,
         p_observacion,
         p_FK_animal,
-        p_num_maniqui
+        p_num_maniqui,
+        p_filancia,
+        p_ph
     );
 END;
 $$ LANGUAGE plpgsql;
+
+
+SELECT muestra_ph FROM tbl_muestra;
 
 SELECT saveMuestra(
     CURRENT_DATE,        -- rep_fecha
@@ -243,7 +252,9 @@ SELECT saveMuestra(
     'Blanco',           -- muestra_color
     'Ninguna',          -- observacion
     'HS-1',             -- FK_animal
-    1                   -- num_maniqui
+    1,                   -- num_maniqui
+    1.5,
+    1.5
 );
 
 /* SAVE VELLON */
@@ -253,13 +264,14 @@ CREATE OR REPLACE FUNCTION saveVellon(
     p_vellon_definicion VARCHAR(10),
     p_vellon_longitudMecha NUMERIC(5,2),
     p_vellon_calce VARCHAR(10),
-    p_vellon_uniformidad VARCHAR(10),
-    p_vellon_tuco VARCHAR(10),
+    p_vellon_uniformidad BOOLEAN,
+    p_vellon_tuco BOOLEAN,
     p_vellon_color VARCHAR(45),
     p_vellon_clase VARCHAR(1),
     p_vellon_observacion VARCHAR(400),
     p_FK_animal VARCHAR(20),
-    p_vellon_fecha DATE
+    p_vellon_fecha DATE,
+    p_vellon_diametro NUMERIC
 )
 RETURNS VOID AS $$
 BEGIN
@@ -274,7 +286,8 @@ BEGIN
         vellon_clase,
         vellon_observacion,
         FK_animal,
-        vellon_fecha
+        vellon_fecha,
+        vellon_diametro
     ) VALUES (
         p_vellon_densidad,
         p_vellon_definicion,
@@ -286,7 +299,8 @@ BEGIN
         p_vellon_clase,
         p_vellon_observacion,
         p_FK_animal,
-        p_vellon_fecha
+        p_vellon_fecha,
+        p_vellon_diametro
     );
 END;
 $$ LANGUAGE plpgsql;
@@ -342,7 +356,7 @@ VALUES('Antiparasitario', 'Marca 1'),
 
 
 
-CREATE VIEW vw_sabana_general2 AS
+CREATE VIEW vw_sabana_general AS
 SELECT
   sb_0.id_arete,
   sb_0.sexo,
@@ -487,8 +501,7 @@ LEFT JOIN (
 ) AS sb_3
 ON sb_2.sb_2_id = sb_3.FK_macho;
 
-SELECT * FROM vw_sabana_general2;
-
+SELECT * FROM vw_sabana_general;
 
 DROP VIEW IF EXISTS vw_sabana_hembra;
 
@@ -1061,3 +1074,11 @@ BEGIN
   ) AS subquery;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+
+SELECT
+  COUNT(*) AS count
+FROM
+  tbl_animal;

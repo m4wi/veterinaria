@@ -11,18 +11,18 @@ const app = express()
 app.use(cors())
 
 app.get('/', (req, res) => {
-  res.status(200).send("veterinaria API");
+  res.status(200).send('veterinaria API')
 })
 
-const apiVersion = "/api/v1"
+const apiVersion = '/api/v1'
 
 // import routes
 app.use(apiVersion, authRoutes)
 app.use(apiVersion, reportRoutes)
 app.use(apiVersion, formRoutes)
 
-app.use("*", (req, res) => {
-  res.send("route not found")
+app.use('*', (req, res) => {
+  res.send('route not found')
 })
 
 export default app
