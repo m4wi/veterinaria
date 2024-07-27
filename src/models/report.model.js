@@ -115,4 +115,16 @@ model.getAnimalCount = async () => {
   }
 }
 
+model.getInitialAnimalTable = async () => {
+  try {
+    const result = await sequelize.query('SELECT * FROM initial_table', {
+      type: sequelize.QueryTypes.SELECT,
+      raw: true
+    })
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
 export default model

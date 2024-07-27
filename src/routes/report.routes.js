@@ -11,4 +11,5 @@ router.post('/report', controller.report)
 
 router.get('/download/:sabana', downloader.downloadSabana)
 router.get('/animal/count', controller.animalCount)
+router.get('/animal/initial', controller.initialAnimalTable)
 export default router

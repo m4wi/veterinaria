@@ -58,4 +58,13 @@ controller.animalCount = async (req, res) => {
   }
 }
 
+controller.initialAnimalTable = async (req, res) => {
+  try {
+    const result = await model.getInitialAnimalTable()
+    res.status(200).json(result)
+  } catch (error) {
+    res.status(500).send({ error: error.message })
+  }
+}
+
 export default controller

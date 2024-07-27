@@ -510,18 +510,58 @@ SELECT * FROM vw_sabana_hembra;
 
 CREATE VIEW vw_sabana_hembra AS
 SELECT
-  *
+  sb_0.id_arete,
+  sb_0.sexo,
+  sb_0.raza_tipo,
+  sb_0.Especie_tipo,
+  sb_0.fecha_ingreso,
+  CONCAT(
+    FLOOR(sb_0.ingreso_edad / 12), ' años ', 
+    ROUND(sb_0.ingreso_edad % 12,0), ' meses'
+  ) AS dfms,
+  sb_1.bio_peso,
+  sb_1.bio_condicionCorporal,
+  sb_1.bio_largoCabeza,
+  sb_1.bio_anchoCabeza,
+  sb_1.bio_largoOrejas,
+  sb_1.bio_largoCuello,
+  sb_1.bio_largoCuerpo,
+  sb_1.bio_alturaCruz,
+  sb_1.bio_anchoGrupa,
+  sb_1.bio_altoGrupa,
+  sb_1.bio_amplitudPecho,
+  sb_1.bio_circunferenciaCuerpo,
+  sb_1.bio_aplomoAnterior,
+  sb_1.bio_aplomoPosterior,
+  sb_1.bio_comisuraVulvar,
+  sb_1.bio_cantDentaria,
+  sb_1.bio_caninos,
+  sb_1.bio_isquiones,
+  sb_2.vellon_calce,
+  sb_2.vellon_clase,
+  sb_2.vellon_color,
+  sb_2.vellon_definicion,
+  sb_2.vellon_densidad,
+  sb_2.vellon_longitudmecha,
+  sb_2.vellon_observacion,
+  sb_2.vellon_tuco,
+  sb_2.vellon_uniformidad,
+  sb_2.vellon_diametro
 FROM (
   SELECT
     ta.id_arete,
     ta.sexo,
     tr.raza_tipo,
-    te.Especie_tipo
+    te.Especie_tipo,
+    tef.ingreso_edad,
+    tef.fecha_ingreso
   FROM Tbl_animal ta
   INNER JOIN Tbl_especie te
     ON te.PK_especie = ta.FK_especie
   INNER JOIN Tbl_animal_raza tr
     ON tr.PK_raza = ta.FK_raza
+  INNER JOIN tbl_animal_fecha tef
+    ON tef.fk_arete = ta.id_arete
   WHERE
     sexo = 'Hembra'  -- Corrección aquí, usamos comillas simples para valores literales
 ) AS sb_0
@@ -575,6 +615,7 @@ LEFT JOIN(
     tv.vellon_longitudmecha,
     tv.vellon_observacion,
     tv.vellon_tuco,
+    tv.vellon_diametro,
     tv.vellon_uniformidad,
     tv.fk_animal AS v_animal
   FROM
@@ -593,6 +634,10 @@ LEFT JOIN(
 ) AS sb_2
 ON sb_1.FK_animal = sb_2.v_animal;
 
+
+
+
+
 -- Consultar la vista
 SELECT * FROM vw_sabana_hembra;
 
@@ -601,18 +646,60 @@ DROP VIEW IF EXISTS vw_sabana_macho;
 
 CREATE VIEW vw_sabana_macho AS
 SELECT
-  *
+  sb_0.id_arete,
+  sb_0.sexo,
+  sb_0.raza_tipo,
+  sb_0.Especie_tipo,
+  sb_0.fecha_ingreso,
+  CONCAT(
+    FLOOR(sb_0.ingreso_edad / 12), ' años ', 
+    ROUND(sb_0.ingreso_edad % 12,0), ' meses'
+  ) AS dfms,
+  sb_1.bio_peso,
+  sb_1.bio_condicionCorporal,
+  sb_1.bio_largoCabeza,
+  sb_1.bio_anchoCabeza,
+  sb_1.bio_largoOrejas,
+  sb_1.bio_largoCuello,
+  sb_1.bio_largoCuerpo,
+  sb_1.bio_alturaCruz,
+  sb_1.bio_anchoGrupa,
+  sb_1.bio_altoGrupa,
+  sb_1.bio_amplitudPecho,
+  sb_1.bio_circunferenciaCuerpo,
+  sb_1.bio_aplomoAnterior,
+  sb_1.bio_aplomoPosterior,
+  sb_1.bio_cantDentaria,
+  sb_1.bio_caninos,
+  sb_1.bio_isquiones,
+  sb_1.bio_tde_ancho,
+  sb_1.bio_tde_largo,
+  sb_1.bio_tiz_ancho,
+  sb_1.bio_tiz_largo,
+  sb_4.vellon_calce,
+  sb_4.vellon_clase,
+  sb_4.vellon_color,
+  sb_4.vellon_definicion,
+  sb_4.vellon_densidad,
+  sb_4.vellon_longitudmecha,
+  sb_4.vellon_tuco,
+  sb_4.vellon_uniformidad,
+  sb_4.vellon_diametro
 FROM (
   SELECT
     ta.id_arete,
     ta.sexo,
     tr.raza_tipo,
-    te.Especie_tipo
+    te.Especie_tipo,
+    tef.ingreso_edad,
+    tef.fecha_ingreso
   FROM Tbl_animal ta
   INNER JOIN Tbl_especie te
     ON te.PK_especie = ta.FK_especie
   INNER JOIN Tbl_animal_raza tr
     ON tr.PK_raza = ta.FK_raza
+  INNER JOIN tbl_animal_fecha tef
+    ON tef.fk_arete = ta.id_arete
   WHERE
     ta.sexo = 'Macho'  -- Corrección aquí, usamos comillas simples para valores literales
 ) AS sb_0
@@ -704,7 +791,36 @@ LEFT JOIN (
     ON tb.FK_macho = rx.FK_macho
     AND tb.rep_fecha = rx.mxfecha
 ) AS sb_3
-ON sb_2.sb_2_id = sb_3.FK_macho;
+ON sb_2.sb_2_id = sb_3.FK_macho
+LEFT JOIN
+(
+  SELECT
+    tv.vellon_calce,
+    tv.vellon_clase,
+    tv.vellon_color,
+    tv.vellon_definicion,
+    tv.vellon_densidad,
+    tv.vellon_longitudmecha,
+    tv.vellon_observacion,
+    tv.vellon_tuco,
+    tv.vellon_diametro,
+    tv.vellon_uniformidad,
+    tv.fk_animal AS v_animal
+  FROM
+    tbl_vellon tv
+  INNER JOIN (
+    SELECT
+      fk_animal AS v_fk_animal,
+      MAX(vellon_fecha) AS vellon_fecha
+    FROM
+      tbl_vellon
+    GROUP BY
+      fk_animal
+  ) AS rv
+  ON rv.v_fk_animal = tv.fk_animal
+  AND rv.vellon_fecha = tv.vellon_fecha
+) AS sb_4
+ON sb_1.FK_animal = sb_4.v_animal;
 
 -- Consultar la vista
 SELECT * FROM vw_sabana_macho;
@@ -1082,3 +1198,214 @@ SELECT
   COUNT(*) AS count
 FROM
   tbl_animal;
+
+
+SELECT
+  *
+FROM
+tbl_animal_fecha tef
+  INNER JOIN
+  (
+  SELECT
+    ta.id_arete,
+    ta.sexo,
+    te.especie_tipo,
+    tr.raza_tipo
+  FROM tbl_animal ta
+    INNER JOIN tbl_animal_raza tr
+    ON ta.fk_raza = tr.pk_raza
+    INNER JOIN tbl_especie te
+    ON ta.fk_especie = te.pk_especie
+  ) AS co
+  ON co.id_arete = tef.fk_arete
+ORDER BY
+  tef.fecha_ingreso;
+
+
+WITH BiometriaOrdenada AS (
+    SELECT
+        PK_historial,
+        FK_animal,
+        bio_peso,
+        ROW_NUMBER() OVER (PARTITION BY FK_animal ORDER BY bio_fecha DESC) AS rn,
+        COUNT(*) OVER (PARTITION BY FK_animal) AS total_registros
+    FROM
+        Tbl_biometria
+)
+SELECT
+    b1.FK_animal,
+    b1.bio_peso AS ultimo_peso,
+    b2.bio_peso AS penultimo_peso,
+    CASE
+        WHEN b1.total_registros > 1 AND b2.bio_peso IS NOT NULL THEN b1.bio_peso - b2.bio_peso
+        ELSE b1.bio_peso
+    END AS diferencia_peso
+FROM
+    BiometriaOrdenada b1
+LEFT JOIN
+    BiometriaOrdenada b2
+ON
+    b1.FK_animal = b2.FK_animal
+    AND b1.rn = 1
+    AND b2.rn = 2
+WHERE
+    b1.rn = 1;
+
+
+SELECT
+  tu.fk_animal,
+  tu.rep_fecha,
+  (tu.rep_fecha + '7 days'::INTERVAL)::DATE AS fecha_futura
+FROM
+  tbl_muestra tu
+INNER JOIN
+(
+  SELECT
+    fk_animal,
+    MAX(rep_fecha) AS max_fecha,
+    ROW_NUMBER() OVER (PARTITION BY fk_animal ORDER BY rep_fecha DESC, pk_muestra DESC) AS rn
+  FROM
+    Tbl_muestra
+  GROUP BY
+    FK_animal
+) AS mx
+ON tu.fk_animal = mx.fk_animal
+AND tu.rep_fecha = mx.max_fecha;
+
+
+
+/***/
+CREATE VIEW initial_table AS
+SELECT
+  tb2.id_arete,
+  tb1.fmdate,
+  tb2.especie_tipo,
+  tb2.raza_tipo,
+  tb3.ultimo_peso,
+  tb3.penultimo_peso,
+  tb3.diferencia_peso,
+  tb4.rep_fecha,
+  tb4.fecha_futura,
+  CASE 
+    WHEN tb3.diferencia_peso > 0 AND tb3.penultimo_peso IS NULL THEN  1
+    ELSE  0
+  END AS peso_state
+FROM
+  (
+    SELECT
+      tf.fk_arete,
+      CONCAT(
+        FLOOR(tf.ingreso_edad / 12), ' : ',
+        ROUND(tf.ingreso_edad % 12,0)
+      ) AS fmdate
+    FROM
+      tbl_animal_fecha tf
+  ) AS tb1
+INNER JOIN
+  (
+    SELECT
+      ta.id_arete,
+      ta.sexo,
+      te.especie_tipo,
+      tr.raza_tipo
+    FROM tbl_animal ta
+      INNER JOIN tbl_animal_raza tr
+      ON ta.fk_raza = tr.pk_raza
+      INNER JOIN tbl_especie te
+      ON ta.fk_especie = te.pk_especie
+  ) AS tb2
+  ON tb1.fk_arete = tb2.id_arete
+LEFT JOIN
+  (
+    WITH BiometriaOrdenada AS (
+      SELECT
+        FK_animal,
+        bio_peso,
+        ROW_NUMBER() OVER (PARTITION BY FK_animal ORDER BY bio_fecha DESC) AS rn,
+        COUNT(*) OVER (PARTITION BY FK_animal) AS total_registros
+      FROM
+        Tbl_biometria
+    )
+    SELECT
+      b1.FK_animal,
+      b1.bio_peso AS ultimo_peso,
+      b2.bio_peso AS penultimo_peso,
+      CASE
+        WHEN b1.total_registros > 1 AND b2.bio_peso IS NOT NULL THEN b1.bio_peso - b2.bio_peso
+        ELSE b1.bio_peso
+      END AS diferencia_peso
+    FROM
+      BiometriaOrdenada b1
+    LEFT JOIN
+      BiometriaOrdenada b2
+    ON
+      b1.FK_animal = b2.FK_animal
+      AND b1.rn = 1
+      AND b2.rn = 2
+    WHERE
+      b1.rn = 1
+  ) AS tb3
+  ON tb2.id_arete = tb3.fk_animal
+LEFT JOIN
+  (
+    SELECT
+      tu.fk_animal,
+      tu.rep_fecha,
+      (tu.rep_fecha + '7 days'::INTERVAL)::DATE AS fecha_futura
+    FROM
+      tbl_muestra tu
+    INNER JOIN
+    (
+      SELECT
+        fk_animal,
+        MAX(rep_fecha) AS max_fecha
+      FROM
+        Tbl_muestra
+      GROUP BY
+        FK_animal
+    ) AS mx
+    ON tu.fk_animal = mx.fk_animal
+    AND tu.rep_fecha = mx.max_fecha
+  ) AS tb4
+  ON tb3.fk_animal = tb4.fk_animal;
+
+
+SELECT * FROM initial_table;
+
+
+
+
+SELECT
+  *
+FROM (
+    SELECT
+        tb.pk_historial,
+        tb.FK_animal,
+        tb.bio_fecha,
+        tb.bio_peso,
+        tb.bio_condicionCorporal,
+        tb.bio_largoCabeza,
+        tb.bio_anchoCabeza,
+        tb.bio_largoOrejas,
+        tb.bio_largoCuello,
+        tb.bio_largoCuerpo,
+        tb.bio_alturaCruz,
+        tb.bio_anchoGrupa,
+        tb.bio_altoGrupa,
+        tb.bio_amplitudPecho,
+        tb.bio_circunferenciaCuerpo,
+        tb.bio_aplomoAnterior,
+        tb.bio_aplomoPosterior,
+        tb.bio_tde_ancho,
+        tb.bio_tde_largo,
+        tb.bio_tiz_ancho,
+        tb.bio_tiz_largo,
+        tb.bio_cantDentaria,
+        tb.bio_caninos,
+        tb.bio_isquiones,
+        ROW_NUMBER() OVER (PARTITION BY FK_animal ORDER BY bio_fecha DESC, pk_historial DESC) AS rn
+    FROM
+        Tbl_biometria tb
+) AS subquery
+WHERE
+    rn = 1;
