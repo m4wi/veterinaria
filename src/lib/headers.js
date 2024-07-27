@@ -32,7 +32,7 @@ const headers = {
   },
   Hembra: {
     ARETE: 'id_arete',
-    EDAD: 'bio_fecha',
+    EDAD: 'fmdate',
     PESO: 'bio_peso',
     C_CORPORAL: 'bio_condicioncorporal',
     RAZA: 'raza_tipo',

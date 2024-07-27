@@ -516,9 +516,9 @@ SELECT
   sb_0.Especie_tipo,
   sb_0.fecha_ingreso,
   CONCAT(
-    FLOOR(sb_0.ingreso_edad / 12), ' años ', 
-    ROUND(sb_0.ingreso_edad % 12,0), ' meses'
-  ) AS dfms,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, sb_0.fecha_ingreso)) + FLOOR(sb_0.ingreso_edad / 12), ' años, ',
+    EXTRACT(MONTH FROM AGE(CURRENT_DATE, sb_0.fecha_ingreso)) + ROUND(sb_0.ingreso_edad % 12,0), ' meses'
+  ) AS fmdate,
   sb_1.bio_peso,
   sb_1.bio_condicionCorporal,
   sb_1.bio_largoCabeza,
@@ -1047,7 +1047,7 @@ $$ LANGUAGE plpgsql;
 SELECT * FROM getDosificacionTable('HS-1', '2024-07-21', '2024-07-22');
 
 
-
+/* #################### FN GET BIOMETRIA TABLE ################# */
 CREATE OR REPLACE FUNCTION getAnimalBiometria(
   p_animal_id VARCHAR,
   p_start_date DATE,
@@ -1128,153 +1128,12 @@ BEGIN
     (p_end_date IS NULL OR tb.bio_fecha <= p_end_date);
 END;
 $$ LANGUAGE plpgsql;
-
 SELECT * FROM getAnimalBiometria(NULL, NULL, NULL);
+/* ################################################## */
 
 
-
-SELECT
-  sexo,
-  COUNT(*) AS state
-FROM Tbl_animal
-WHERE
-  id_arete = 'HS-0'
-GROUP BY
-  sexo;
-
-
-CREATE OR REPLACE FUNCTION checkAnimal(id_arete_param VARCHAR)
-RETURNS TABLE (
-  animal_exists INTEGER,
-  sexo VARCHAR
-) AS $$
-BEGIN
-  RETURN QUERY
-  SELECT
-    CASE
-      WHEN COUNT(*) > 0 THEN 1
-      ELSE 0
-    END AS animal_exists,
-    MAX(sexo) AS sexo
-  FROM (
-    SELECT
-      sexo
-    FROM Tbl_animal
-    WHERE id_arete = id_arete_param
-    GROUP BY sexo
-  ) AS subquery;
-END;
-$$ LANGUAGE plpgsql;
-
-SELECT checkanimal('HS-1');
-
-CREATE OR REPLACE FUNCTION checkAnimal(id_arete_param VARCHAR)
-RETURNS TABLE (
-  animal_exists INTEGER,
-  animal_sexo VARCHAR
-) AS $$
-BEGIN
-  RETURN QUERY
-  SELECT
-    CASE
-      WHEN COUNT(subquery.sexo) > 0 THEN 1
-      ELSE 0
-    END AS animal_exists,
-    subquery.sexo as animal_sexo
-  FROM (
-    SELECT
-      sexo
-    FROM Tbl_animal
-    WHERE id_arete = id_arete_param
-    GROUP BY sexo
-  ) AS subquery;
-END;
-$$ LANGUAGE plpgsql;
-
-
-
-
-SELECT
-  COUNT(*) AS count
-FROM
-  tbl_animal;
-
-
-SELECT
-  *
-FROM
-tbl_animal_fecha tef
-  INNER JOIN
-  (
-  SELECT
-    ta.id_arete,
-    ta.sexo,
-    te.especie_tipo,
-    tr.raza_tipo
-  FROM tbl_animal ta
-    INNER JOIN tbl_animal_raza tr
-    ON ta.fk_raza = tr.pk_raza
-    INNER JOIN tbl_especie te
-    ON ta.fk_especie = te.pk_especie
-  ) AS co
-  ON co.id_arete = tef.fk_arete
-ORDER BY
-  tef.fecha_ingreso;
-
-
-WITH BiometriaOrdenada AS (
-    SELECT
-        PK_historial,
-        FK_animal,
-        bio_peso,
-        ROW_NUMBER() OVER (PARTITION BY FK_animal ORDER BY bio_fecha DESC) AS rn,
-        COUNT(*) OVER (PARTITION BY FK_animal) AS total_registros
-    FROM
-        Tbl_biometria
-)
-SELECT
-    b1.FK_animal,
-    b1.bio_peso AS ultimo_peso,
-    b2.bio_peso AS penultimo_peso,
-    CASE
-        WHEN b1.total_registros > 1 AND b2.bio_peso IS NOT NULL THEN b1.bio_peso - b2.bio_peso
-        ELSE b1.bio_peso
-    END AS diferencia_peso
-FROM
-    BiometriaOrdenada b1
-LEFT JOIN
-    BiometriaOrdenada b2
-ON
-    b1.FK_animal = b2.FK_animal
-    AND b1.rn = 1
-    AND b2.rn = 2
-WHERE
-    b1.rn = 1;
-
-
-SELECT
-  tu.fk_animal,
-  tu.rep_fecha,
-  (tu.rep_fecha + '7 days'::INTERVAL)::DATE AS fecha_futura
-FROM
-  tbl_muestra tu
-INNER JOIN
-(
-  SELECT
-    fk_animal,
-    MAX(rep_fecha) AS max_fecha,
-    ROW_NUMBER() OVER (PARTITION BY fk_animal ORDER BY rep_fecha DESC, pk_muestra DESC) AS rn
-  FROM
-    Tbl_muestra
-  GROUP BY
-    FK_animal
-) AS mx
-ON tu.fk_animal = mx.fk_animal
-AND tu.rep_fecha = mx.max_fecha;
-
-
-
-/***/
+/* #################### INITAL TABLE ################# */
+DROP VIEW initial_table;
 CREATE VIEW initial_table AS
 SELECT
   tb2.id_arete,
@@ -1295,8 +1154,8 @@ FROM
     SELECT
       tf.fk_arete,
       CONCAT(
-        FLOOR(tf.ingreso_edad / 12), ' : ',
-        ROUND(tf.ingreso_edad % 12,0)
+      EXTRACT(YEAR FROM AGE(CURRENT_DATE, tf.fecha_ingreso)) + FLOOR(tf.ingreso_edad / 12), ' : ',
+      EXTRACT(MONTH FROM AGE(CURRENT_DATE, tf.fecha_ingreso)) + ROUND(tf.ingreso_edad % 12,0)
       ) AS fmdate
     FROM
       tbl_animal_fecha tf
@@ -1369,10 +1228,9 @@ LEFT JOIN
   ) AS tb4
   ON tb3.fk_animal = tb4.fk_animal;
 
-
 SELECT * FROM initial_table;
 
-
+/* ################################################## */
 
 
 SELECT

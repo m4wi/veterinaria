@@ -2,18 +2,6 @@ import sequelize from '../config/db.js'
 
 const model = {}
 
-/*
-    p_arete VARCHAR(20),
-    p_sexo VARCHAR(10),
-    p_especie INT,
-    p_raza INT,
-    p_padre VARCHAR(20),
-    p_madre VARCHAR(20),
-    p_tipo_ingreso VARCHAR(50),
-    p_fecha_ingreso DATE,
-    p_edad_aproximada NUMERIC DEFAULT 0
-
-*/
 model.formAnimal = async (data) => {
   const { arete, sexo, especie, raza, padre, madre, tipo_ingreso, fecha_ingreso, edad } = data
   try {
@@ -175,13 +163,14 @@ model.formMuestra = async (data) => {
 
 model.formDosificacion = async (data) => {
   try {
-    const { arete, producto } = data
+    const { arete, producto, obs } = data
     const metadata = await sequelize.query(
-      'INSERT INTO Tbl_dosificacion(dsf_fecha, FK_producto, FK_animal) VALUES(CURRENT_DATE, :numprod , :arete);',
+      'INSERT INTO Tbl_dosificacion(dsf_fecha, FK_producto, FK_animal, dsf_observacion) VALUES(CURRENT_DATE, :numprod , :arete, :obs);',
       {
         replacements: {
           numprod: producto,
-          arete
+          arete,
+          obs
         },
         type: sequelize.QueryTypes.INSERT,
         raw: true
