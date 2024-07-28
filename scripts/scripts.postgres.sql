@@ -333,9 +333,9 @@ WHERE
   password = '123456789';
 
 
-INSERT INTO Tbl_dosificacion(dsf_fecha, FK_producto, FK_animal)
+INSERT INTO Tbl_dosificacion(dsf_fecha, FK_producto, FK_animal, dsf_observacion)
 VALUES
-(CURRENT_DATE, 2, 'HS-1');
+(CURRENT_DATE, 2, 'HS-1', 'ninguna');
 
 INSERT INTO tbl_producto(producto_nombre, producto_tipo)
 VALUES('Antiparasitario', 'Marca 1'),
@@ -354,7 +354,7 @@ VALUES('Antiparasitario', 'Marca 1'),
 
 
 
-
+DROP VIEW IF EXISTS vw_sabana_general;
 
 CREATE VIEW vw_sabana_general AS
 SELECT
@@ -362,7 +362,10 @@ SELECT
   sb_0.sexo,
   sb_0.raza_tipo,
   sb_0.Especie_tipo,
-  sb_1.bio_fecha,
+    CONCAT(
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, sb_0.fecha_ingreso)) + FLOOR(sb_0.ingreso_edad / 12), ' años, ',
+    EXTRACT(MONTH FROM AGE(CURRENT_DATE, sb_0.fecha_ingreso)) + ROUND(sb_0.ingreso_edad % 12,0), ' meses'
+  ) AS fmdate,
   sb_1.bio_peso,
   sb_1.bio_condicionCorporal,
   sb_1.bio_largoCabeza,
@@ -377,14 +380,21 @@ SELECT
   sb_1.bio_circunferenciaCuerpo,
   sb_1.bio_aplomoAnterior,
   sb_1.bio_aplomoPosterior,
-  sb_1.bio_tde_ancho,
-  sb_1.bio_tde_largo,
-  sb_1.bio_tiz_ancho,
-  sb_1.bio_tiz_largo,
-  sb_1.bio_comisuraVulvar,
   sb_1.bio_cantDentaria,
+  sb_1.bio_comisuravulvar,
   sb_1.bio_caninos,
   sb_1.bio_isquiones,
+  CONCAT('A: ', sb_1.bio_tde_ancho, ', cm L: ', sb_1.bio_tde_largo, ' cm') AS tes_derecho,
+  CONCAT('A: ', sb_1.bio_tiz_ancho, ', cm L: ', sb_1.bio_tiz_largo, ' cm') AS tes_izquierdo,
+  sb_4.vellon_calce,
+  sb_4.vellon_clase,
+  sb_4.vellon_color,
+  sb_4.vellon_definicion,
+  sb_4.vellon_densidad,
+  sb_4.vellon_longitudmecha,
+  sb_4.vellon_tuco,
+  sb_4.vellon_uniformidad,
+  sb_4.vellon_diametro,
   sb_2.rep_hora_inicio,
   sb_2.rep_hora_fin,
   sb_2.tem_inicio,
@@ -393,21 +403,23 @@ SELECT
   sb_2.muestra_color,
   sb_2.observacion,
   sb_2.num_maniqui,
-  sb_2.rep_fecha AS muestra_fecha,
+  sb_2.rep_fecha,
+  sb_2.muestra_filancia,
+  sb_2.muestra_ph,
   sb_3.rep_snd_gurural,
   sb_3.rep_impetu,
   sb_3.rep_nderribo,
   sb_3.rep_derribo,
   sb_3.rep_tiempo_copula,
-  sb_3.FK_macho,
-  sb_3.FK_hembra,
-  sb_3.rep_observacion
+  sb_3.FK_hembra
 FROM (
   SELECT
     ta.id_arete,
     ta.sexo,
     tr.raza_tipo,
-    te.Especie_tipo
+    te.Especie_tipo,
+    tef.ingreso_edad,
+    tef.fecha_ingreso
   FROM Tbl_animal ta
   INNER JOIN Tbl_especie te
     ON te.PK_especie = ta.FK_especie
@@ -417,89 +429,97 @@ FROM (
     ON tef.fk_arete = ta.id_arete
 ) AS sb_0
 LEFT JOIN (
-  SELECT
-    tb.bio_fecha,
-    tb.bio_peso,
-    tb.bio_condicionCorporal,
-    tb.bio_largoCabeza,
-    tb.bio_anchoCabeza,
-    tb.bio_largoOrejas,
-    tb.bio_largoCuello,
-    tb.bio_largoCuerpo,
-    tb.bio_alturaCruz,
-    tb.bio_anchoGrupa,
-    tb.bio_altoGrupa,
-    tb.bio_amplitudPecho,
-    tb.bio_circunferenciaCuerpo,
-    tb.bio_aplomoAnterior,
-    tb.bio_aplomoPosterior,
-    tb.bio_tde_ancho,
-    tb.bio_tde_largo,
-    tb.bio_tiz_ancho,
-    tb.bio_tiz_largo,
-    tb.bio_comisuraVulvar,
-    tb.FK_animal,
-    tb.bio_cantDentaria,
-    tb.bio_caninos,
-    tb.bio_isquiones
-  FROM Tbl_biometria tb
-  INNER JOIN (
-    SELECT
-      FK_animal,
-      MAX(bio_fecha) AS mxfecha
-    FROM Tbl_biometria
-    GROUP BY FK_animal
-  ) AS rx
-    ON rx.FK_animal = tb.FK_animal
-    AND rx.mxfecha = tb.bio_fecha
+  WITH maxBiometricRow AS (
+      SELECT
+        tb.FK_animal AS bio_fk_animal,
+        tb.bio_peso,
+        tb.bio_condicionCorporal,
+        tb.bio_largoCabeza,
+        tb.bio_anchoCabeza,
+        tb.bio_largoOrejas,
+        tb.bio_largoCuello,
+        tb.bio_largoCuerpo,
+        tb.bio_alturaCruz,
+        tb.bio_anchoGrupa,
+        tb.bio_altoGrupa,
+        tb.bio_amplitudPecho,
+        tb.bio_circunferenciaCuerpo,
+        tb.bio_aplomoAnterior,
+        tb.bio_aplomoPosterior,
+        tb.bio_comisuravulvar,
+        tb.bio_tde_ancho,
+        tb.bio_tde_largo,
+        tb.bio_tiz_ancho,
+        tb.bio_tiz_largo,
+        tb.bio_cantDentaria,
+        tb.bio_caninos,
+        tb.bio_isquiones,
+        ROW_NUMBER() OVER(PARTITION BY tb.fk_animal ORDER BY tb.bio_fecha DESC, tb.pk_historial DESC) as rn
+      FROM
+        Tbl_biometria tb
+    ) SELECT * FROM maxBiometricRow WHERE rn = 1
 ) AS sb_1
-ON sb_0.id_arete = sb_1.FK_animal
+ON sb_0.id_arete = sb_1.bio_fk_animal
 LEFT JOIN (
-  SELECT
-    tm.FK_animal AS sb_2_id,
-    tm.rep_hora_inicio,
-    tm.rep_hora_fin,
-    tm.tem_inicio,
-    tm.temp_final,
-    tm.muestra_volumen,
-    tm.muestra_color,
-    tm.observacion,
-    tm.num_maniqui,
-    tm.rep_fecha
-  FROM Tbl_muestra tm
-  INNER JOIN (
+  WITH maxSampleRow AS (
     SELECT
-      FK_animal,
-      MAX(rep_fecha) AS max_fecha
-    FROM Tbl_muestra
-    GROUP BY FK_animal
-  ) AS max_dates
-    ON tm.FK_animal = max_dates.FK_animal
-    AND tm.rep_fecha = max_dates.max_fecha
+      tm.FK_animal AS muestra_fk_animal,
+      tm.rep_hora_inicio,
+      tm.rep_hora_fin,
+      tm.tem_inicio,
+      tm.temp_final,
+      tm.muestra_volumen,
+      tm.muestra_color,
+      tm.observacion,
+      tm.num_maniqui,
+      tm.rep_fecha,
+      tm.muestra_filancia,
+      tm.muestra_ph,
+      ROW_NUMBER() OVER(PARTITION BY tm.fk_animal ORDER BY tm.rep_fecha DESC, tm.pk_muestra DESC) AS rn
+    FROM
+      Tbl_muestra tm
+) SELECT * FROM maxSampleRow WHERE rn = 1
 ) AS sb_2
-ON sb_1.FK_animal = sb_2.sb_2_id
+ON sb_1.bio_fk_animal = sb_2.muestra_fk_animal
 LEFT JOIN (
-  SELECT
-    tb.rep_snd_gurural,
-    tb.rep_impetu,
-    tb.rep_nderribo,
-    tb.rep_derribo,
-    tb.rep_tiempo_copula,
-    tb.FK_macho,
-    tb.FK_hembra,
-    tb.rep_observacion
-  FROM Tbl_reproduccion tb
-  INNER JOIN (
+  WITH maxReproductionRow AS (
     SELECT
-      FK_macho,
-      MAX(rep_fecha) AS mxfecha
-    FROM Tbl_reproduccion
-    GROUP BY FK_macho
-  ) AS rx
-    ON tb.FK_macho = rx.FK_macho
-    AND tb.rep_fecha = rx.mxfecha
+      tb.rep_snd_gurural,
+      tb.rep_impetu,
+      tb.rep_nderribo,
+      tb.rep_derribo,
+      tb.rep_tiempo_copula,
+      tb.FK_macho AS reproduction_fk_animal,
+      tb.FK_hembra,
+      tb.rep_observacion,
+      ROW_NUMBER() OVER (PARTITION BY tb.fk_macho ORDER BY tb.rep_fecha DESC, tb.pk_reproduccion DESC) AS rn
+    FROM Tbl_reproduccion tb
+  ) SELECT * FROM maxReproductionRow WHERE rn = 1
 ) AS sb_3
-ON sb_2.sb_2_id = sb_3.FK_macho;
+ON sb_2.muestra_fk_animal = sb_3.reproduction_fk_animal
+LEFT JOIN
+(
+  WITH maxVellonRow AS
+  (
+    SELECT
+      tv.pk_vellon,
+      tv.vellon_calce,
+      tv.vellon_clase,
+      tv.vellon_color,
+      tv.vellon_definicion,
+      tv.vellon_densidad,
+      tv.vellon_longitudmecha,
+      tv.vellon_observacion,
+      tv.vellon_tuco,
+      tv.vellon_diametro,
+      tv.vellon_uniformidad,
+      tv.fk_animal AS vellon_fk_animal,
+      ROW_NUMBER() OVER(PARTITION BY fk_animal ORDER BY vellon_fecha DESC, pk_vellon DESC) AS rn
+    FROM
+      tbl_vellon tv
+  ) SELECT * FROM maxVellonRow WHERE rn = 1
+) AS sb_4
+ON sb_1.bio_fk_animal = sb_4.vellon_fk_animal;
 
 SELECT * FROM vw_sabana_general;
 
@@ -566,75 +586,59 @@ FROM (
     sexo = 'Hembra'  -- Corrección aquí, usamos comillas simples para valores literales
 ) AS sb_0
 LEFT JOIN (
-  SELECT
-    tb.bio_fecha,
-    tb.bio_peso,
-    tb.bio_condicionCorporal,
-    tb.bio_largoCabeza,
-    tb.bio_anchoCabeza,
-    tb.bio_largoOrejas,
-    tb.bio_largoCuello,
-    tb.bio_largoCuerpo,
-    tb.bio_alturaCruz,
-    tb.bio_anchoGrupa,
-    tb.bio_altoGrupa,
-    tb.bio_amplitudPecho,
-    tb.bio_circunferenciaCuerpo,
-    tb.bio_aplomoAnterior,
-    tb.bio_aplomoPosterior,
-    tb.bio_tde_ancho,
-    tb.bio_tde_largo,
-    tb.bio_tiz_ancho,
-    tb.bio_tiz_largo,
-    tb.bio_comisuraVulvar,
-    tb.FK_animal,
-    tb.bio_cantDentaria,
-    tb.bio_caninos,
-    tb.bio_isquiones
-  FROM
-    Tbl_biometria tb
-  INNER JOIN (
+  WITH maxBiometricRow AS (
     SELECT
-      FK_animal,
-      MAX(bio_fecha) AS mxfecha
-    FROM Tbl_biometria
-    GROUP BY
-      FK_animal
-  ) AS rx
-    ON rx.FK_animal = tb.FK_animal
-    AND rx.mxfecha = tb.bio_fecha
-) AS sb_1
-ON sb_0.id_arete = sb_1.FK_animal
-LEFT JOIN(
-  SELECT
-    tv.vellon_calce,
-    tv.vellon_clase,
-    tv.vellon_color,
-    tv.vellon_definicion,
-    tv.vellon_densidad,
-    tv.vellon_longitudmecha,
-    tv.vellon_observacion,
-    tv.vellon_tuco,
-    tv.vellon_diametro,
-    tv.vellon_uniformidad,
-    tv.fk_animal AS v_animal
-  FROM
-    tbl_vellon tv
-  INNER JOIN (
-    SELECT
-      fk_animal AS v_fk_animal,
-      MAX(vellon_fecha) AS vellon_fecha
+      tb.FK_animal AS bio_fk_animal,
+      tb.bio_peso,
+      tb.bio_condicionCorporal,
+      tb.bio_largoCabeza,
+      tb.bio_anchoCabeza,
+      tb.bio_largoOrejas,
+      tb.bio_largoCuello,
+      tb.bio_largoCuerpo,
+      tb.bio_alturaCruz,
+      tb.bio_anchoGrupa,
+      tb.bio_altoGrupa,
+      tb.bio_amplitudPecho,
+      tb.bio_circunferenciaCuerpo,
+      tb.bio_aplomoAnterior,
+      tb.bio_aplomoPosterior,
+      tb.bio_tde_ancho,
+      tb.bio_tde_largo,
+      tb.bio_tiz_ancho,
+      tb.bio_tiz_largo,
+      tb.bio_comisuraVulvar,
+      tb.bio_cantDentaria,
+      tb.bio_caninos,
+      tb.bio_isquiones,
+      ROW_NUMBER() OVER(PARTITION BY tb.fk_animal ORDER BY tb.bio_fecha DESC, tb.pk_historial DESC) as rn
     FROM
-      tbl_vellon
-    GROUP BY
-      fk_animal
-  ) AS rv
-  ON rv.v_fk_animal = tv.fk_animal
-  AND rv.vellon_fecha = tv.vellon_fecha
+      Tbl_biometria tb
+  ) SELECT * FROM maxBiometricRow WHERE rn = 1
+) AS sb_1
+ON sb_0.id_arete = sb_1.bio_fk_animal
+LEFT JOIN(    -- vellon
+  WITH maxVellonRow AS
+  (
+    SELECT
+      tv.pk_vellon,
+      tv.vellon_calce,
+      tv.vellon_clase,
+      tv.vellon_color,
+      tv.vellon_definicion,
+      tv.vellon_densidad,
+      tv.vellon_longitudmecha,
+      tv.vellon_observacion,
+      tv.vellon_tuco,
+      tv.vellon_diametro,
+      tv.vellon_uniformidad,
+      tv.fk_animal AS vellon_fk_animal,
+      ROW_NUMBER() OVER(PARTITION BY fk_animal ORDER BY vellon_fecha DESC, pk_vellon DESC) AS rn
+    FROM
+      tbl_vellon tv
+  ) SELECT * FROM maxVellonRow WHERE rn = 1
 ) AS sb_2
-ON sb_1.FK_animal = sb_2.v_animal;
-
-
+ON sb_1.bio_fk_animal = sb_2.vellon_fk_animal;
 
 
 
@@ -650,11 +654,10 @@ SELECT
   sb_0.sexo,
   sb_0.raza_tipo,
   sb_0.Especie_tipo,
-  sb_0.fecha_ingreso,
-  CONCAT(
-    FLOOR(sb_0.ingreso_edad / 12), ' años ', 
-    ROUND(sb_0.ingreso_edad % 12,0), ' meses'
-  ) AS dfms,
+    CONCAT(
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, sb_0.fecha_ingreso)) + FLOOR(sb_0.ingreso_edad / 12), ' años, ',
+    EXTRACT(MONTH FROM AGE(CURRENT_DATE, sb_0.fecha_ingreso)) + ROUND(sb_0.ingreso_edad % 12,0), ' meses'
+  ) AS fmdate,
   sb_1.bio_peso,
   sb_1.bio_condicionCorporal,
   sb_1.bio_largoCabeza,
@@ -684,7 +687,24 @@ SELECT
   sb_4.vellon_longitudmecha,
   sb_4.vellon_tuco,
   sb_4.vellon_uniformidad,
-  sb_4.vellon_diametro
+  sb_4.vellon_diametro,
+  sb_2.rep_hora_inicio,
+  sb_2.rep_hora_fin,
+  sb_2.tem_inicio,
+  sb_2.temp_final,
+  sb_2.muestra_volumen,
+  sb_2.muestra_color,
+  sb_2.observacion,
+  sb_2.num_maniqui,
+  sb_2.rep_fecha,
+  sb_2.muestra_filancia,
+  sb_2.muestra_ph,
+  sb_3.rep_snd_gurural,
+  sb_3.rep_impetu,
+  sb_3.rep_nderribo,
+  sb_3.rep_derribo,
+  sb_3.rep_tiempo_copula,
+  sb_3.FK_hembra
 FROM (
   SELECT
     ta.id_arete,
@@ -704,126 +724,103 @@ FROM (
     ta.sexo = 'Macho'  -- Corrección aquí, usamos comillas simples para valores literales
 ) AS sb_0
 LEFT JOIN (
-  SELECT
-    tb.bio_fecha,
-    tb.bio_peso,
-    tb.bio_condicionCorporal,
-    tb.bio_largoCabeza,
-    tb.bio_anchoCabeza,
-    tb.bio_largoOrejas,
-    tb.bio_largoCuello,
-    tb.bio_largoCuerpo,
-    tb.bio_alturaCruz,
-    tb.bio_anchoGrupa,
-    tb.bio_altoGrupa,
-    tb.bio_amplitudPecho,
-    tb.bio_circunferenciaCuerpo,
-    tb.bio_aplomoAnterior,
-    tb.bio_aplomoPosterior,
-    tb.bio_tde_ancho,
-    tb.bio_tde_largo,
-    tb.bio_tiz_ancho,
-    tb.bio_tiz_largo,
-    tb.FK_animal,
-    tb.bio_cantDentaria,
-    tb.bio_caninos,
-    tb.bio_isquiones
-  FROM
-    Tbl_biometria tb
-  INNER JOIN (
-    SELECT
-      FK_animal,
-      MAX(bio_fecha) AS mxfecha
-    FROM Tbl_biometria
-    GROUP BY
-      FK_animal
-  ) AS rx
-    ON rx.FK_animal = tb.FK_animal
-    AND rx.mxfecha = tb.bio_fecha
+  WITH maxBiometricRow AS (
+      SELECT
+        tb.FK_animal AS bio_fk_animal,
+        tb.bio_peso,
+        tb.bio_condicionCorporal,
+        tb.bio_largoCabeza,
+        tb.bio_anchoCabeza,
+        tb.bio_largoOrejas,
+        tb.bio_largoCuello,
+        tb.bio_largoCuerpo,
+        tb.bio_alturaCruz,
+        tb.bio_anchoGrupa,
+        tb.bio_altoGrupa,
+        tb.bio_amplitudPecho,
+        tb.bio_circunferenciaCuerpo,
+        tb.bio_aplomoAnterior,
+        tb.bio_aplomoPosterior,
+        tb.bio_tde_ancho,
+        tb.bio_tde_largo,
+        tb.bio_tiz_ancho,
+        tb.bio_tiz_largo,
+        tb.bio_cantDentaria,
+        tb.bio_caninos,
+        tb.bio_isquiones,
+        ROW_NUMBER() OVER(PARTITION BY tb.fk_animal ORDER BY tb.bio_fecha DESC, tb.pk_historial DESC) as rn
+      FROM
+        Tbl_biometria tb
+    ) SELECT * FROM maxBiometricRow WHERE rn = 1
 ) AS sb_1
-ON sb_0.id_arete = sb_1.FK_animal
+ON sb_0.id_arete = sb_1.bio_fk_animal
 LEFT JOIN (
-  SELECT
-    tm.FK_animal AS sb_2_id,
-    tm.rep_hora_inicio,
-    tm.rep_hora_fin,
-    tm.tem_inicio,
-    tm.temp_final,
-    tm.muestra_volumen,
-    tm.muestra_color,
-    tm.observacion,
-    tm.num_maniqui,
-    tm.rep_fecha
-  FROM
-    Tbl_muestra tm
-  INNER JOIN (
+  WITH maxSampleRow AS (
     SELECT
-      FK_animal,
-      MAX(rep_fecha) AS max_fecha
+      tm.FK_animal AS muestra_fk_animal,
+      tm.rep_hora_inicio,
+      tm.rep_hora_fin,
+      tm.tem_inicio,
+      tm.temp_final,
+      tm.muestra_volumen,
+      tm.muestra_color,
+      tm.observacion,
+      tm.num_maniqui,
+      tm.rep_fecha,
+      tm.muestra_filancia,
+      tm.muestra_ph,
+      ROW_NUMBER() OVER(PARTITION BY tm.fk_animal ORDER BY tm.rep_fecha DESC, tm.pk_muestra DESC) AS rn
     FROM
-      Tbl_muestra
-    GROUP BY
-      FK_animal
-  ) AS max_dates
-    ON tm.FK_animal = max_dates.FK_animal
-    AND tm.rep_fecha = max_dates.max_fecha
+      Tbl_muestra tm
+) SELECT * FROM maxSampleRow WHERE rn = 1
 ) AS sb_2
-ON sb_1.FK_animal = sb_2.sb_2_id
+ON sb_1.bio_fk_animal = sb_2.muestra_fk_animal
 LEFT JOIN (
-  SELECT
-    tb.rep_snd_gurural,
-    tb.rep_impetu,
-    tb.rep_nderribo,
-    tb.rep_derribo,
-    tb.rep_tiempo_copula,
-    tb.FK_macho,
-    tb.FK_hembra,
-    tb.rep_observacion
-  FROM Tbl_reproduccion tb
-  INNER JOIN (
+  WITH maxReproductionRow AS (
     SELECT
-      FK_macho,
-      MAX(rep_fecha) AS mxfecha
-    FROM Tbl_reproduccion
-    GROUP BY
-      FK_macho
-  ) AS rx
-    ON tb.FK_macho = rx.FK_macho
-    AND tb.rep_fecha = rx.mxfecha
+      tb.rep_snd_gurural,
+      tb.rep_impetu,
+      tb.rep_nderribo,
+      tb.rep_derribo,
+      tb.rep_tiempo_copula,
+      tb.FK_macho AS reproduction_fk_animal,
+      tb.FK_hembra,
+      tb.rep_observacion,
+      ROW_NUMBER() OVER (PARTITION BY tb.fk_macho ORDER BY tb.rep_fecha DESC, tb.pk_reproduccion DESC) AS rn
+    FROM Tbl_reproduccion tb
+  ) SELECT * FROM maxReproductionRow WHERE rn = 1
 ) AS sb_3
-ON sb_2.sb_2_id = sb_3.FK_macho
+ON sb_2.muestra_fk_animal = sb_3.reproduction_fk_animal
 LEFT JOIN
 (
-  SELECT
-    tv.vellon_calce,
-    tv.vellon_clase,
-    tv.vellon_color,
-    tv.vellon_definicion,
-    tv.vellon_densidad,
-    tv.vellon_longitudmecha,
-    tv.vellon_observacion,
-    tv.vellon_tuco,
-    tv.vellon_diametro,
-    tv.vellon_uniformidad,
-    tv.fk_animal AS v_animal
-  FROM
-    tbl_vellon tv
-  INNER JOIN (
+  WITH maxVellonRow AS
+  (
     SELECT
-      fk_animal AS v_fk_animal,
-      MAX(vellon_fecha) AS vellon_fecha
+      tv.pk_vellon,
+      tv.vellon_calce,
+      tv.vellon_clase,
+      tv.vellon_color,
+      tv.vellon_definicion,
+      tv.vellon_densidad,
+      tv.vellon_longitudmecha,
+      tv.vellon_observacion,
+      tv.vellon_tuco,
+      tv.vellon_diametro,
+      tv.vellon_uniformidad,
+      tv.fk_animal AS vellon_fk_animal,
+      ROW_NUMBER() OVER(PARTITION BY fk_animal ORDER BY vellon_fecha DESC, pk_vellon DESC) AS rn
     FROM
-      tbl_vellon
-    GROUP BY
-      fk_animal
-  ) AS rv
-  ON rv.v_fk_animal = tv.fk_animal
-  AND rv.vellon_fecha = tv.vellon_fecha
+      tbl_vellon tv
+  ) SELECT * FROM maxVellonRow WHERE rn = 1
 ) AS sb_4
-ON sb_1.FK_animal = sb_4.v_animal;
+ON sb_1.bio_fk_animal = sb_4.vellon_fk_animal;
 
 -- Consultar la vista
 SELECT * FROM vw_sabana_macho;
+
+
+
+
 
 /* ######################################################################################## */
 
@@ -1145,6 +1142,7 @@ SELECT
   tb3.diferencia_peso,
   tb4.rep_fecha,
   tb4.fecha_futura,
+  tb2.sexo,
   CASE 
     WHEN tb3.diferencia_peso > 0 AND tb3.penultimo_peso IS NULL THEN  1
     ELSE  0
