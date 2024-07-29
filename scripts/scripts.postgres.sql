@@ -55,7 +55,8 @@ CREATE OR REPLACE FUNCTION savebiometria(
     p_FK_animal VARCHAR(20),
     p_bio_cantDentaria VARCHAR(50),
     p_bio_caninos VARCHAR(100),
-    p_isquiones NUMERIC(5,2)
+    p_isquiones NUMERIC(5,2),
+    p_obs TEXT
 )
 RETURNS VOID AS $$
 BEGIN
@@ -83,7 +84,8 @@ BEGIN
         FK_animal,
         bio_cantDentaria,
         bio_caninos,
-        bio_isquiones
+        bio_isquiones,
+        bio_observacion
     ) VALUES (
         p_bio_fecha,
         p_bio_peso,
@@ -108,7 +110,8 @@ BEGIN
         p_FK_animal,
         p_bio_cantDentaria,
         p_bio_caninos,
-        p_isquiones
+        p_isquiones,
+        p_obs
     );
 END;
 $$ LANGUAGE plpgsql;
@@ -384,8 +387,8 @@ SELECT
   sb_1.bio_comisuravulvar,
   sb_1.bio_caninos,
   sb_1.bio_isquiones,
-  CONCAT('A: ', sb_1.bio_tde_ancho, ', cm L: ', sb_1.bio_tde_largo, ' cm') AS tes_derecho,
-  CONCAT('A: ', sb_1.bio_tiz_ancho, ', cm L: ', sb_1.bio_tiz_largo, ' cm') AS tes_izquierdo,
+  CONCAT('A: ', ROUND(sb_1.bio_tde_ancho, 2), ', cm L: ', ROUND(sb_1.bio_tde_largo,2), ' cm') AS tes_derecho,
+  CONCAT('A: ', ROUND(sb_1.bio_tiz_ancho), 2, ', cm L: ', ROUND(sb_1.bio_tiz_largo,2), ' cm') AS tes_izquierdo,
   sb_4.vellon_calce,
   sb_4.vellon_clase,
   sb_4.vellon_color,
@@ -675,18 +678,22 @@ SELECT
   sb_1.bio_cantDentaria,
   sb_1.bio_caninos,
   sb_1.bio_isquiones,
-  sb_1.bio_tde_ancho,
-  sb_1.bio_tde_largo,
-  sb_1.bio_tiz_ancho,
-  sb_1.bio_tiz_largo,
+  CONCAT('A: ', ROUND(sb_1.bio_tde_ancho, 2), ', cm L: ', ROUND(sb_1.bio_tde_largo,2), ' cm') AS tes_derecho,
+  CONCAT('A: ', ROUND(sb_1.bio_tiz_ancho), 2, ', cm L: ', ROUND(sb_1.bio_tiz_largo,2), ' cm') AS tes_izquierdo,
   sb_4.vellon_calce,
   sb_4.vellon_clase,
   sb_4.vellon_color,
   sb_4.vellon_definicion,
   sb_4.vellon_densidad,
   sb_4.vellon_longitudmecha,
-  sb_4.vellon_tuco,
-  sb_4.vellon_uniformidad,
+  CASE 
+    WHEN sb_4.vellon_tuco THEN 'Si'
+    ELSE  'No'
+  END AS vellon_tuco,
+  CASE 
+    WHEN sb_4.vellon_uniformidad THEN 'Si'
+    ELSE  'No'
+  END AS vellon_uniformidad,
   sb_4.vellon_diametro,
   sb_2.rep_hora_inicio,
   sb_2.rep_hora_fin,

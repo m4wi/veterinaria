@@ -31,10 +31,10 @@ model.formAnimal = async (data) => {
 }
 
 model.formBiometria = async (data) => {
-  const { peso, Ccorporal, Lcabeza, Acabeza, Loreja, Lcuello, Lcuerpo, ALcruz, ANgrupa, ALgrupa, AMpecho, CIcuerpo, APanterior, APposterior, TDEancho, TDElargo, TIZancho, TIZlargo, COvulvar, arete, CNdiente, canino, isquiones } = data
+  const { peso, Ccorporal, Lcabeza, Acabeza, Loreja, Lcuello, Lcuerpo, ALcruz, ANgrupa, ALgrupa, AMpecho, CIcuerpo, APanterior, APposterior, TDEancho, TDElargo, TIZancho, TIZlargo, COvulvar, arete, CNdiente, canino, isquiones, obs } = data
   try {
     const metadata = await sequelize.query(
-      'SELECT savebiometria( CURRENT_DATE, :peso, :Ccorporal, :Lcabeza, :Acabeza, :Loreja, :Lcuello, :Lcuerpo, :ALcruz, :ANgrupa, :ALgrupa, :AMpecho, :CIcuerpo, :APanterior, :APposterior, :TDEancho, :TDElargo, :TIZancho, :TIZlargo, :COvulvar, :arete, :CNdiente, :canino, :isquiones)',
+      'SELECT savebiometria( CURRENT_DATE, :peso, :Ccorporal, :Lcabeza, :Acabeza, :Loreja, :Lcuello, :Lcuerpo, :ALcruz, :ANgrupa, :ALgrupa, :AMpecho, :CIcuerpo, :APanterior, :APposterior, :TDEancho, :TDElargo, :TIZancho, :TIZlargo, :COvulvar, :arete, :CNdiente, :canino, :isquiones, :obs)',
       {
         replacements: {
           peso,
@@ -59,7 +59,8 @@ model.formBiometria = async (data) => {
           arete,
           CNdiente,
           canino,
-          isquiones
+          isquiones,
+          obs
         },
         type: sequelize.QueryTypes.INSERT,
         raw: true
