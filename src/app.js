@@ -6,7 +6,7 @@ import { PORT } from './config/config.js'
 dotenv.config()
 
 const app = express()
-app.use(morgan("dev"))
+app.use(morgan('dev'))
 app.use(express.json())
 app.use(routes)
 

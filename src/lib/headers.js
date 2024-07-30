@@ -1,132 +1,214 @@
 const headers = {
   Macho: {
-    I_ARETE: 'id_arete',
-    I_EDAD: 'fmdate',
-    I_PESO: 'bio_peso',
-    I_C_CORPORAL: 'bio_condicioncorporal',
-    I_RAZA: 'raza_tipo',
-    I_ESPECIE: 'especie_tipo',
-    'I_C. DENTARIA': 'bio_cantdentaria',
-    B_CANINOS: 'bio_caninos',
-    B_ALTURA_CRUZ: 'bio_alturacruz',
-    B_ALTURA_GRUPA: 'bio_altogrupa',
-    B_LONG_CUERPO: 'bio_largocuerpo',
-    B_ANCHO_GRUPA: 'bio_anchogrupa',
-    B_CIR_CUERPO: 'bio_circunferenciacuerpo',
-    B_AMP_PECHO: 'bio_circunferenciacuerpo',
-    B_ANCHO_CABEZA: 'bio_anchocabeza',
-    B_LARGO_CABEZA: 'bio_largocabeza',
-    B_ISQUIONES: 'bio_isquiones',
-    B_OREJAS: 'bio_largoorejas',
-    B_TES_DERECHO: 'tes_derecho',
-    B_TES_IZQUIERDO: 'tes_izquierdo',
-    B_LARGO_CUELLO: 'bio_largocuello',
-    B_TREN_ANTERIOR: 'bio_aplomoanterior',
-    V_DENSIDAD: 'vellon_densidad',
-    V_DEFINICION: 'vellon_definicion',
-    V_LON_MECHA: 'vellon_longitudmecha',
-    V_CALCE: 'vellon_calce',
-    V_UNIFORMIDAD: 'vellon_uniformidad',
-    V_TUCO: 'vellon_tuco',
-    V_COLOR: 'vellon_color',
-    V_CLASE: 'vellon_clase',
-    V_DIAMETRO: 'vellon_diametro',
-    M_H_INICIO: 'rep_hora_inicio',
-    M_H_FIN: 'rep_hora_fin',
-    M_TEMP_INICIO: 'tem_inicio',
-    M_TEMP_FIN: 'temp_final',
-    M_VOLUMEN: 'muestra_volumen',
-    M_COLOR: 'muestra_color',
-    M_MANIQUI: 'num_maniqui',
-    M_FECHA: 'rep_fecha',
-    M_FILANCIA: 'muestra_filancia',
-    M_PH: 'muestra_ph',
-    R_SND_GUTURAL: 'rep_snd_gurural',
-    R_IMPETU: 'rep_impetu',
-    R_DERRIBO: 'rep_derribo',
-    R_TIEMPO_COPULA: 'rep_tiempo_copula',
-    R_HEMBRA: 'FK_hembra'
+    tableName: 'REGISTRO DE DATOS ALPACAS MACHOS',
+    text1: 'PROPIETARIO: UNIVERSIDAD JORGE BASADRE GROHMANN',
+    text2: 'UBICACIÓN DEL PREDIO: FUNDO PICHONES SUR II DE LA UNJBG             DISTRITO: TACNA  PROVINCIA: TACNA    REGIÓN: TACNA     FECHA:',
+    categories: [
+      {
+        name: 'DATOS GENERALES',
+        fields: {
+          ARETE: 'id_arete',
+          EDAD: 'fmdate',
+          PESO: 'bio_peso',
+          ESPECIE: 'especie_tipo',
+          RAZA: 'raza_tipo'
+        }
+      },
+      {
+        name: 'BIOMETRIA',
+        fields: {
+          'C.CORPORAL': 'bio_condicioncorporal',
+          'ALTURA DE CRUZ': 'bio_alturacruz',
+          'ALTURA DE GRUPA': 'bio_altogrupa',
+          'LONGITUD DE CUERPO': 'bio_largocuerpo',
+          'ANCHO DE GRUPA': 'bio_anchogrupa',
+          'CIRCUNFERENCIA DE CUERPO': 'bio_circunferenciacuerpo',
+          'AMPLITUD DE PECHO': 'bio_circunferenciacuerpo',
+          'ANCHO DE CABEZA': 'bio_anchocabeza',
+          'LARGO DE CABEZA': 'bio_largocabeza',
+          ISQUIONES: 'bio_isquiones',
+          'LARGO DE OREJAS': 'bio_largoorejas',
+          'LARGO DE CUELLO': 'bio_largocuello',
+          'TREN ANTERIOR': 'bio_aplomoanterior',
+          'TREN POSTERIOR': 'bio_aplomoposterior',
+          'C. DENTARIA': 'bio_cantdentaria',
+          CANINOS: 'bio_caninos',
+          'TESTÍCULO DERECHO': 'tes_derecho',
+          'TESTÍCULO IZQUIERDO': 'tes_izquierdo'
+        }
+      },
+      {
+        name: 'CLASIFICACIÓN DE FIBRA',
+        fields: {
+          'DENSIDAD VELLÓN': 'vellon_densidad',
+          'DEFINICION VELLÓN': 'vellon_definicion',
+          'LONGITUD DE MECHA': 'vellon_longitudmecha',
+          CALCE: 'vellon_calce',
+          UNIFORMIDAD: 'vellon_uniformidad',
+          TUCO: 'vellon_tuco',
+          COLOR: 'vellon_color',
+          CLASE: 'vellon_clase',
+          'DIAMETRO VELLÓN': 'vellon_diametro'
+        }
+      },
+      {
+        name: 'MUESTRA DE SEMEN',
+        fields: {
+          'HORA DE INICIO': 'rep_hora_inicio',
+          'HORA DE FIN': 'rep_hora_fin',
+          'TEMPERATURA INICIO': 'tem_inicio',
+          'TEMPERATURA FIN': 'temp_final',
+          VOLUMEN: 'muestra_volumen',
+          ' COLOR': 'muestra_color',
+          MANIQUI: 'num_maniqui',
+          FECHA: 'rep_fecha',
+          FILANCIA: 'muestra_filancia',
+          PH: 'muestra_ph'
+        }
+      },
+      {
+        name: 'CAPACIDAD REPRODUCTIVA',
+        fields: {
+          'SONIDO GUTURAL': 'rep_snd_gurural',
+          IMPETU: 'rep_impetu',
+          DERRIBO: 'rep_derribo',
+          'TIEMPO DE COPULA': 'rep_tiempo_copula',
+          HEMBRA: 'FK_hembra'
+        }
+      }
+    ]
   },
   Hembra: {
-    I_ARETE: 'id_arete',
-    I_EDAD: 'fmdate',
-    I_PESO: 'bio_peso',
-    I_C_CORPORAL: 'bio_condicioncorporal',
-    I_RAZA: 'raza_tipo',
-    I_ESPECIE: 'especie_tipo',
-    'I_C. DENTARIA': 'bio_cantdentaria',
-    B_CANINOS: 'bio_caninos',
-    B_ALTURA_CRUZ: 'bio_alturacruz',
-    B_ALTURA_GRUPA: 'bio_altogrupa',
-    B_LONG_CUERPO: 'bio_largocuerpo',
-    B_ANCHO_GRUPA: 'bio_anchogrupa',
-    B_CIR_CUERPO: 'bio_circunferenciacuerpo',
-    B_AMP_PECHO: 'bio_circunferenciacuerpo',
-    B_ANCHO_CABEZA: 'bio_anchocabeza',
-    B_LARGO_CABEZA: 'bio_largocabeza',
-    B_ISQUIONES: 'bio_isquiones',
-    B_OREJAS: 'bio_largoorejas',
-    B_LARGO_CUELLO: 'bio_largocuello',
-    B_TREN_ANTERIOR: 'bio_aplomoanterior',
-    B_COMISURA_VULVAR: 'bio_comisuravulvar',
-    V_DENSIDAD: 'vellon_densidad',
-    V_DEFINICION: 'vellon_definicion',
-    V_LON_MECHA: 'vellon_longitudmecha',
-    V_CALCE: 'vellon_calce',
-    V_UNIFORMIDAD: 'vellon_uniformidad',
-    V_TUCO: 'vellon_tuco',
-    V_COLOR: 'vellon_color',
-    V_CLASE: 'vellon_clase',
-    V_DIAMETRO: 'vellon_diametro'
+    tableName: 'REGISTRO DE DATOS ALPACAS HEMBRAS',
+    text1: 'PROPIETARIO: UNIVERSIDAD JORGE BASADRE GROHMANN',
+    text2: 'UBICACIÓN DEL PREDIO: FUNDO PICHONES SUR II DE LA UNJBG             DISTRITO: TACNA  PROVINCIA: TACNA    REGIÓN: TACNA     FECHA:',
+    categories: [
+      {
+        name: 'DATOS GENERALES',
+        fields: {
+          ARETE: 'id_arete',
+          EDAD: 'fmdate',
+          PESO: 'bio_peso',
+          ESPECIE: 'especie_tipo',
+          RAZA: 'raza_tipo'
+        }
+      },
+      {
+        name: 'BIOMETRIA',
+        fields: {
+          'CONDICION CORPORAL': 'bio_condicioncorporal',
+          'ALTURA DE CRUZ': 'bio_alturacruz',
+          'ALTURA DE GRUPA': 'bio_altogrupa',
+          'LONGITUD DE CUERPO': 'bio_largocuerpo',
+          'ANCHO DE GRUPA': 'bio_anchogrupa',
+          'CIRCUNFERENCIA DE CUERPO': 'bio_circunferenciacuerpo',
+          'AMPLITUD DE PECHO': 'bio_circunferenciacuerpo',
+          'ANCHO DE CABEZA': 'bio_anchocabeza',
+          'LARGO DE CABEZA': 'bio_largocabeza',
+          ISQUIONES: 'bio_isquiones',
+          'LARGO DE OREJAS': 'bio_largoorejas',
+          'LARGO DE CUELLO': 'bio_largocuello',
+          'TREN ANTERIOR': 'bio_aplomoanterior',
+          'TREN POSTERIOR': 'bio_aplomoposterior',
+          'COMISURA VULVAR': 'bio_comisuravulvar',
+          'C. DENTARIA': 'bio_cantdentaria',
+          CANINOS: 'bio_caninos'
+        }
+      },
+      {
+        name: 'CLASIFICACIÓN DE FIBRA',
+        fields: {
+          'DENSIDAD VELLÓN': 'vellon_densidad',
+          'DEFINICION VELLÓN': 'vellon_definicion',
+          'LONGITUD DE MECHA': 'vellon_longitudmecha',
+          CALCE: 'vellon_calce',
+          UNIFORMIDAD: 'vellon_uniformidad',
+          TUCO: 'vellon_tuco',
+          COLOR: 'vellon_color',
+          CLASE: 'vellon_clase',
+          'DIAMETRO VELLÓN': 'vellon_diametro'
+        }
+      }
+    ]
   },
   General: {
-    I_ARETE: 'id_arete',
-    I_EDAD: 'fmdate',
-    I_PESO: 'bio_peso',
-    I_C_CORPORAL: 'bio_condicioncorporal',
-    I_RAZA: 'raza_tipo',
-    I_ESPECIE: 'especie_tipo',
-    'I_C. DENTARIA': 'bio_cantdentaria',
-    B_CANINOS: 'bio_caninos',
-    B_ALTURA_CRUZ: 'bio_alturacruz',
-    B_ALTURA_GRUPA: 'bio_altogrupa',
-    B_LONG_CUERPO: 'bio_largocuerpo',
-    B_ANCHO_GRUPA: 'bio_anchogrupa',
-    B_CIR_CUERPO: 'bio_circunferenciacuerpo',
-    B_AMP_PECHO: 'bio_circunferenciacuerpo',
-    B_ANCHO_CABEZA: 'bio_anchocabeza',
-    B_LARGO_CABEZA: 'bio_largocabeza',
-    B_ISQUIONES: 'bio_isquiones',
-    B_OREJAS: 'bio_largoorejas',
-    B_TES_DERECHO: 'tes_derecho',
-    B_TES_IZQUIERDO: 'tes_izquierdo',
-    B_LARGO_CUELLO: 'bio_largocuello',
-    B_TREN_ANTERIOR: 'bio_aplomoanterior',
-    B_COMISURA_VULVAR: 'bio_comisuravulvar',
-    V_DENSIDAD: 'vellon_densidad',
-    V_DEFINICION: 'vellon_definicion',
-    V_LON_MECHA: 'vellon_longitudmecha',
-    V_CALCE: 'vellon_calce',
-    V_UNIFORMIDAD: 'vellon_uniformidad',
-    V_TUCO: 'vellon_tuco',
-    V_COLOR: 'vellon_color',
-    V_CLASE: 'vellon_clase',
-    V_DIAMETRO: 'vellon_diametro',
-    M_H_INICIO: 'rep_hora_inicio',
-    M_H_FIN: 'rep_hora_fin',
-    M_TEMP_INICIO: 'tem_inicio',
-    M_TEMP_FIN: 'temp_final',
-    M_VOLUMEN: 'muestra_volumen',
-    M_COLOR: 'muestra_color',
-    M_MANIQUI: 'num_maniqui',
-    M_FECHA: 'rep_fecha',
-    M_FILANCIA: 'muestra_filancia',
-    M_PH: 'muestra_ph',
-    R_SND_GUTURAL: 'rep_snd_gurural',
-    R_IMPETU: 'rep_impetu',
-    R_DERRIBO: 'rep_derribo',
-    R_TIEMPO_COPULA: 'rep_tiempo_copula',
-    R_HEMBRA: 'FK_hembra'
+    tableName: 'REGISTRO DE DATOS ALPACAS EN GENERAL',
+    text1: 'PROPIETARIO: UNIVERSIDAD JORGE BASADRE GROHMANN',
+    text2: 'UBICACIÓN DEL PREDIO: FUNDO PICHONES SUR II DE LA UNJBG             DISTRITO: TACNA  PROVINCIA: TACNA    REGIÓN: TACNA     FECHA:',
+    categories: [
+      {
+        name: 'DATOS GENERALES',
+        fields: {
+          ARETE: 'id_arete',
+          EDAD: 'fmdate',
+          PESO: 'bio_peso',
+          ESPECIE: 'especie_tipo',
+          RAZA: 'raza_tipo'
+        }
+      },
+      {
+        name: 'BIOMETRIA',
+        fields: {
+          'C.CORPORAL': 'bio_condicioncorporal',
+          'ALTURA DE CRUZ': 'bio_alturacruz',
+          'ALTURA DE GRUPA': 'bio_altogrupa',
+          'LONGITUD DE CUERPO': 'bio_largocuerpo',
+          'ANCHO DE GRUPA': 'bio_anchogrupa',
+          'CIRCUNFERENCIA DE CUERPO': 'bio_circunferenciacuerpo',
+          'AMPLITUD DE PECHO': 'bio_circunferenciacuerpo',
+          'ANCHO DE CABEZA': 'bio_anchocabeza',
+          'LARGO DE CABEZA': 'bio_largocabeza',
+          ISQUIONES: 'bio_isquiones',
+          'LARGO DE OREJAS': 'bio_largoorejas',
+          'TESTÍCULO DERECHO': 'tes_derecho',
+          'TESTÍCULO IZQUIERDO': 'tes_izquierdo',
+          'LARGO DE CUELLO': 'bio_largocuello',
+          'TREN ANTERIOR': 'bio_aplomoanterior',
+          'TREN POSTERIOR': 'bio_aplomoposterior',
+          'C. DENTARIA': 'bio_cantdentaria',
+          CANINOS: 'bio_caninos'
+        }
+      },
+      {
+        name: 'CLASIFICACIÓN DE FIBRA',
+        fields: {
+          'DENSIDAD VELLÓN': 'vellon_densidad',
+          'DEFINICION VELLÓN': 'vellon_definicion',
+          'LONGITUD DE MECHA': 'vellon_longitudmecha',
+          CALCE: 'vellon_calce',
+          UNIFORMIDAD: 'vellon_uniformidad',
+          TUCO: 'vellon_tuco',
+          COLOR: 'vellon_color',
+          CLASE: 'vellon_clase',
+          'DIAMETRO VELLÓN': 'vellon_diametro'
+        }
+      },
+      {
+        name: 'MUESTRA DE SEMEN',
+        fields: {
+          'HORA DE INICIO': 'rep_hora_inicio',
+          'HORA DE FIN': 'rep_hora_fin',
+          'TEMPERATURA INICIO': 'tem_inicio',
+          'TEMPERATURA FIN': 'temp_final',
+          VOLUMEN: 'muestra_volumen',
+          ' COLOR': 'muestra_color',
+          MANIQUI: 'num_maniqui',
+          FECHA: 'rep_fecha',
+          FILANCIA: 'muestra_filancia',
+          PH: 'muestra_ph'
+        }
+      },
+      {
+        name: 'CAPACIDAD REPRODUCTIVA',
+        fields: {
+          'SONIDO GUTURAL': 'rep_snd_gurural',
+          IMPETU: 'rep_impetu',
+          DERRIBO: 'rep_derribo',
+          'TIEMPO DE COPULA': 'rep_tiempo_copula',
+          HEMBRA: 'FK_hembra'
+        }
+      }
+    ]
   }
 }
 

@@ -395,8 +395,14 @@ SELECT
   sb_4.vellon_definicion,
   sb_4.vellon_densidad,
   sb_4.vellon_longitudmecha,
-  sb_4.vellon_tuco,
-  sb_4.vellon_uniformidad,
+  CASE 
+    WHEN sb_4.vellon_tuco THEN 'Si'
+    ELSE  'No'
+  END AS vellon_tuco,
+  CASE 
+    WHEN sb_4.vellon_uniformidad THEN 'Si'
+    ELSE  'No'
+  END AS vellon_uniformidad,
   sb_4.vellon_diametro,
   sb_2.rep_hora_inicio,
   sb_2.rep_hora_fin,
@@ -410,10 +416,20 @@ SELECT
   sb_2.muestra_filancia,
   sb_2.muestra_ph,
   sb_3.rep_snd_gurural,
-  sb_3.rep_impetu,
-  sb_3.rep_nderribo,
-  sb_3.rep_derribo,
-  sb_3.rep_tiempo_copula,
+  CONCAT(
+    ROUND(sb_3.rep_impetu / 60, 0), ' min, ',
+    ROUND(sb_3.rep_impetu % 60,0), ' seg'
+  ) AS rep_impetu,
+  CONCAT(
+    ROUND(sb_3.rep_derribo / 3600,0), ' hr, ',
+    ROUND((sb_3.rep_derribo % 3600) / 60, 0), ' min, ',
+    ROUND(sb_3.rep_derribo % 60,0), ' seg'
+    ) AS rep_derribo,
+  CONCAT(
+    ROUND(sb_3.rep_tiempo_copula / 3600,0), ' hr, ',
+    ROUND((sb_3.rep_tiempo_copula % 3600) / 60, 0), ' min, ',
+    ROUND(sb_3.rep_tiempo_copula % 60,0), ' seg'
+    ) AS rep_tiempo_copula,
   sb_3.FK_hembra
 FROM (
   SELECT
@@ -567,8 +583,14 @@ SELECT
   sb_2.vellon_densidad,
   sb_2.vellon_longitudmecha,
   sb_2.vellon_observacion,
-  sb_2.vellon_tuco,
-  sb_2.vellon_uniformidad,
+  CASE 
+    WHEN sb_2.vellon_tuco THEN 'Si'
+    ELSE  'No'
+  END AS vellon_tuco,
+  CASE 
+    WHEN sb_2.vellon_uniformidad THEN 'Si'
+    ELSE  'No'
+  END AS vellon_uniformidad,
   sb_2.vellon_diametro
 FROM (
   SELECT
@@ -606,10 +628,6 @@ LEFT JOIN (
       tb.bio_circunferenciaCuerpo,
       tb.bio_aplomoAnterior,
       tb.bio_aplomoPosterior,
-      tb.bio_tde_ancho,
-      tb.bio_tde_largo,
-      tb.bio_tiz_ancho,
-      tb.bio_tiz_largo,
       tb.bio_comisuraVulvar,
       tb.bio_cantDentaria,
       tb.bio_caninos,
@@ -707,10 +725,20 @@ SELECT
   sb_2.muestra_filancia,
   sb_2.muestra_ph,
   sb_3.rep_snd_gurural,
-  sb_3.rep_impetu,
-  sb_3.rep_nderribo,
-  sb_3.rep_derribo,
-  sb_3.rep_tiempo_copula,
+  CONCAT(
+    ROUND(sb_3.rep_impetu / 60, 0), ' min, ',
+    ROUND(sb_3.rep_impetu % 60,0), ' seg'
+  ) AS rep_impetu,
+  CONCAT(
+    ROUND(sb_3.rep_derribo / 3600,0), ' hr, ',
+    ROUND((sb_3.rep_derribo % 3600) / 60, 0), ' min, ',
+    ROUND(sb_3.rep_derribo % 60,0), ' seg'
+    ) AS rep_derribo,
+  CONCAT(
+    ROUND(sb_3.rep_tiempo_copula / 3600,0), ' hr, ',
+    ROUND((sb_3.rep_tiempo_copula % 3600) / 60, 0), ' min, ',
+    ROUND(sb_3.rep_tiempo_copula % 60,0), ' seg'
+    ) AS rep_tiempo_copula,
   sb_3.FK_hembra
 FROM (
   SELECT
