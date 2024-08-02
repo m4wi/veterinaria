@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize'
+import { PSQL_URL } from './config.js'
 
-const sequelize = new Sequelize("postgresql://postgres.vzwysynqcqjenrhrsfyo:oon3wRJYvYwZQl8x@aws-0-us-east-1.pooler.supabase.com:6543/postgres")
+const sequelize = new Sequelize(PSQL_URL)
 
 sequelize.authenticate()
   .then(() => {

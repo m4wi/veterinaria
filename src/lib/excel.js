@@ -42,6 +42,8 @@ const generator = async (data, headers) => {
     sheet.column(col).width(15)
   }
 
+  if (!data) return workbook.outputAsync()
+
   data.forEach((row, rowIndex) => {
     let currentCol = 1
     headers.categories.forEach(category => {

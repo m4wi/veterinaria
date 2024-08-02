@@ -386,7 +386,10 @@ SELECT
   sb_1.bio_cantDentaria,
   sb_1.bio_comisuravulvar,
   sb_1.bio_caninos,
-  sb_1.bio_isquiones,
+  CASE 
+    WHEN sb_1.bio_isquiones = 0.0 THEN 'No se registro'
+    ELSE  to_char(sb_1.bio_isquiones, 'FM999999999.00')
+  END AS bio_isquiones,
   CONCAT('A: ', ROUND(sb_1.bio_tde_ancho, 2), ', cm L: ', ROUND(sb_1.bio_tde_largo,2), ' cm') AS tes_derecho,
   CONCAT('A: ', ROUND(sb_1.bio_tiz_ancho), 2, ', cm L: ', ROUND(sb_1.bio_tiz_largo,2), ' cm') AS tes_izquierdo,
   sb_4.vellon_calce,
@@ -575,7 +578,10 @@ SELECT
   sb_1.bio_comisuraVulvar,
   sb_1.bio_cantDentaria,
   sb_1.bio_caninos,
-  sb_1.bio_isquiones,
+  CASE 
+    WHEN sb_1.bio_isquiones = 0.0 THEN 'No se registro'
+    ELSE  to_char(sb_1.bio_isquiones, 'FM999999999.00')
+  END AS bio_isquiones,
   sb_2.vellon_calce,
   sb_2.vellon_clase,
   sb_2.vellon_color,
@@ -695,7 +701,10 @@ SELECT
   sb_1.bio_aplomoPosterior,
   sb_1.bio_cantDentaria,
   sb_1.bio_caninos,
-  sb_1.bio_isquiones,
+  CASE 
+    WHEN sb_1.bio_isquiones = 0.0 THEN 'No se registro'
+    ELSE  to_char(sb_1.bio_isquiones, 'FM999999999.00')
+  END AS bio_isquiones,
   CONCAT('A: ', ROUND(sb_1.bio_tde_ancho, 2), ', cm L: ', ROUND(sb_1.bio_tde_largo,2), ' cm') AS tes_derecho,
   CONCAT('A: ', ROUND(sb_1.bio_tiz_ancho), 2, ', cm L: ', ROUND(sb_1.bio_tiz_largo,2), ' cm') AS tes_izquierdo,
   sb_4.vellon_calce,
